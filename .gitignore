@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+
+# Build output
+.output
+.wxt
+stats.html
+stats-*.json
+web-ext.config.ts
+coverage
+
+# Logs
+*.log
+
+# Local model files used during development
+models/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.sw?

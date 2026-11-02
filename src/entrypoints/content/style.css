@@ -1,0 +1,65 @@
+article.xff-pending > div,
+article.xff-blurred > div:not(.xff-overlay) {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+}
+
+article.xff-pending > div {
+  filter: blur(6px);
+  transition: filter 120ms ease-out;
+}
+
+article.xff-blurred {
+  position: relative;
+}
+
+article.xff-hidden {
+  /* biome-ignore lint/complexity/noImportantStyles: X sets display with inline styles on some posts. */
+  display: none !important;
+}
+
+.xff-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  font:
+    500 14px / 1.3 system-ui,
+    -apple-system,
+    sans-serif;
+  color: rgb(15 20 25);
+  background: rgb(255 255 255 / 0.55);
+}
+
+.xff-show {
+  flex: none;
+  padding: 6px 14px;
+  border: 1px solid rgb(207 217 222);
+  border-radius: 9999px;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  background: rgb(255 255 255);
+  cursor: pointer;
+}
+
+.xff-show:focus-visible {
+  outline: 2px solid rgb(29 155 240);
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .xff-overlay {
+    color: rgb(231 233 234);
+    background: rgb(0 0 0 / 0.5);
+  }
+  .xff-show {
+    border-color: rgb(83 100 113);
+    background: rgb(0 0 0);
+  }
+}

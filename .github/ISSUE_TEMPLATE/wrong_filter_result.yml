@@ -1,0 +1,43 @@
+name: Wrong filter result
+description: A post was filtered when it must not be, or it was not filtered when it must be.
+labels: [filter-quality]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These reports help us tune the filters.
+        Do not include private information. Do not include posts from private accounts.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type of error
+      options:
+        - The post was filtered, but it must be visible.
+        - The post was visible, but it must be filtered.
+    validations:
+      required: true
+  - type: input
+    id: filter
+    attributes:
+      label: Filter
+      description: Give the built-in filter name or your filter description.
+      placeholder: Negativity and rage bait
+    validations:
+      required: true
+  - type: textarea
+    id: post
+    attributes:
+      label: Post text
+      description: Copy the text of the public post, or give a link to it.
+    validations:
+      required: true
+  - type: input
+    id: strictness
+    attributes:
+      label: Strictness
+      placeholder: 50%
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: Automatic

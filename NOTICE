@@ -1,0 +1,17 @@
+X Feed Filter
+Copyright 2026 The X Feed Filter contributors
+
+This product is licensed under the Apache License, Version 2.0.
+
+Model weights
+-------------
+This product does not include model weights. At runtime, it can download
+model weights from Hugging Face. These weights have their own licenses:
+
+- Liquid AI d1 models (for example d1-omni-600M): LFM Open License v1.0.
+  Copyright Liquid AI, Inc. https://huggingface.co/LiquidAI
+- ModernBERT zero-shot models: Apache License 2.0.
+  https://huggingface.co/MoritzLaurer
+
+X is a trademark of X Corp. This product is not affiliated with,
+endorsed by, or sponsored by X Corp.

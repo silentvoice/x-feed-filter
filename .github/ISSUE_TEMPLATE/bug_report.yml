@@ -1,0 +1,51 @@
+name: Bug report
+description: Tell us about a problem with the extension.
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for the report. Do not include private information.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe what occurs.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+      description: Describe what you expected to occur.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open x.com.
+        2. Turn on the "Politics" filter.
+        3. Scroll the Home timeline.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: Find it on chrome://extensions.
+    validations:
+      required: true
+  - type: input
+    id: chrome
+    attributes:
+      label: Chrome version and computer
+      placeholder: Chrome 142, MacBook Air M2, macOS 26
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console messages
+      description: Copy the messages that start with [x-feed-filter].
+      render: text
