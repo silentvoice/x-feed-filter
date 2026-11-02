@@ -28,7 +28,8 @@
     "parity": "vitest run scripts/d1-parity scripts/indra-parity",
     "bench": "vite --config bench/vite.config.ts",
     "e2e": "playwright test",
-    "eval": "node scripts/eval.mjs"
+    "eval": "node scripts/eval.mjs",
+    "store:assets": "node scripts/store-assets.mjs"
   },
   "dependencies": {
     "@huggingface/tokenizers": "^0.2.0",

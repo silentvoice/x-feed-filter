@@ -93,20 +93,19 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       report({ state: 'error', progress: 0, message: errorText(error) });
       throw error;
     })
-    .then(async (backend) => ({
-      backend: backend.id,
-      scores:
-        message.type === 'classify'
-          ? await backend.classify(
-              message.readImageText ? await imageText.addImageText(message.posts) : message.posts,
-              message.filters,
-            )
-          : [],
-    }));
+    .then(async (backend) => {
+      if (message.type !== 'classify') return { backend: backend.id, scores: [] };
+      const posts = message.readImageText
+        ? await imageText.addImageText(message.posts)
+        : message.posts;
+      return {
+        backend: backend.id,
+        scores: await backend.classify(posts, message.filters),
+        imageTexts: posts.map((post) => post.imageText),
+      };
+    });
   work
-    .then(({ backend, scores }) =>
-      sendResponse({ scores, backend } satisfies OffscreenClassifyResponse),
-    )
+    .then((response) => sendResponse(response satisfies OffscreenClassifyResponse))
     .catch((error: unknown) => {
       console.error('[lull] model error', error);
       sendResponse({ scores: [], error: errorText(error) } satisfies OffscreenClassifyResponse);

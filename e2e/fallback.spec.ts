@@ -37,15 +37,18 @@ test('uses the zero-shot model when WebGPU is not available', async () => {
       ).chrome.storage.sync.clear(),
     );
 
-    const page = await context.newPage();
-    await page.goto('https://x.com/home');
-    await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 240_000 });
-    await expect(page.locator('article[data-xff-id="1004"]')).toHaveClass(/xff-blurred/);
-    await expect(page.locator('article[data-xff-id="1002"]')).not.toHaveClass(/xff-blurred/);
-
+    // The popup starts the model. Wait for the download (about 150 MB on the first run).
     const popup = await context.newPage();
     await popup.goto(`chrome-extension://${extensionId}/popup.html`);
-    await expect(popup.getByText('ModernBERT zero-shot is ready')).toBeVisible({ timeout: 60_000 });
+    await expect(popup.getByText('ModernBERT zero-shot is ready')).toBeVisible({
+      timeout: 240_000,
+    });
+
+    const page = await context.newPage();
+    await page.goto('https://x.com/home');
+    await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 60_000 });
+    await expect(page.locator('article[data-xff-id="1004"]')).toHaveClass(/xff-blurred/);
+    await expect(page.locator('article[data-xff-id="1002"]')).not.toHaveClass(/xff-blurred/);
   } finally {
     await context.close();
   }

@@ -45,7 +45,7 @@ This document gives the milestones of the project and their status.
 - ✅ Tuned descriptions and a calibration for each built-in filter. See [evaluation](evaluation.md).
 - ✅ "Not a match" button on filtered posts that adjusts the threshold of each filter
 - ✅ "Recently filtered" list with reasons, and daily statistics
-- ⬜ Add real posts to the evaluation set (local only, not in the repository)
+- ✅ Evaluate with your own posts: opt-in saving, a label page, and `npm run eval -- --posts` (local only, not in the repository). See [evaluation](evaluation.md#evaluate-with-your-own-posts).
 
 ## M4: Images ✅
 
@@ -53,9 +53,11 @@ This document gives the milestones of the project and their status.
 - ✅ On-device text recognition for screenshots ([Indra OCR](model-selection.md#text-recognition-indra-ocr), CPU, about 6 MB)
 - ⬜ Image model for photos without text (research: Qwen3.5-0.8B vision has no verified browser export yet)
 
-## M5: Chrome Web Store ⬜
+## M5: Chrome Web Store 🚧
 
-- ⬜ First-run screen that explains the download size
-- ⬜ Store listing, screenshots, and privacy disclosures
-- ⬜ Performance pass and error states
-- ⬜ First public release
+- ✅ First-run page that explains the download size and starts the download
+- ✅ Posts stay visible while the model downloads. They do not wait for it.
+- ✅ Error states: "Try again" for a model that does not start, and automatic retries every 30 seconds
+- ✅ Store listing, screenshots, promotional tiles, and privacy disclosures. See [store listing](store-listing.md).
+- ✅ Privacy policy page on the website
+- ⬜ First public release (the maintainer submits it from the Chrome Web Store developer account)

@@ -11,15 +11,24 @@
  * Writes eval/results/<backend>.json.
  */
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { basename, resolve } from 'node:path';
 import { chromium } from '@playwright/test';
 import { createServer } from 'vite';
 
-const backend = process.argv.find((a, i) => i > 1 && !a.startsWith('--')) ?? 'd1';
+const postsArg = process.argv.indexOf('--posts');
+/** Another posts file, for example your own labeled posts (see docs/evaluation.md). */
+const postsFile = postsArg > 0 ? process.argv[postsArg + 1] : 'eval/posts.json';
+const backend =
+  process.argv.find((a, i) => i > 1 && !a.startsWith('--') && i !== postsArg + 1) ?? 'd1';
 const shippedOnly = process.argv.includes('--shipped');
 const local = backend === 'zero-shot' ? !!process.env.ZS_MODEL_DIR : !!process.env.D1_MODEL_DIR;
 const THRESHOLD = 0.55; // The default strictness (0.5).
 
-const posts = JSON.parse(await readFile('eval/posts.json', 'utf8'));
+const posts = JSON.parse(await readFile(postsFile, 'utf8'));
+// The page imports eval/posts.json. bench/vite.config.ts replaces it with this file.
+process.env.EVAL_POSTS = resolve(postsFile);
+/** The posts that have a label for this filter. A file can label only some filters. */
+const labeled = (id) => posts.filter((p) => p.labels?.[id] === 0 || p.labels?.[id] === 1);
 const variants = JSON.parse(await readFile('eval/variants.json', 'utf8'));
 
 // No file watching: edits during a long run must not reload the page.
@@ -124,7 +133,8 @@ const report = {};
 for (const [id, list] of Object.entries(variants)) {
   report[id] = list.flatMap((v, i) => {
     if (result.scores[posts[0].id][`${id}#${i}`] === undefined) return [];
-    const scored = posts.map((p) => ({
+    if (!labeled(id).some((p) => p.labels[id] === 1)) return [];
+    const scored = labeled(id).map((p) => ({
       s: result.scores[p.id][`${id}#${i}`],
       y: p.labels[id] === 1,
     }));
@@ -150,7 +160,7 @@ const shipped = {};
 for (const id of Object.keys(variants)) {
   const preset = PRESETS.find((p) => p.id === id);
   const index = shippedIndex[id];
-  if (index < 0) continue;
+  if (index < 0 || !labeled(id).some((p) => p.labels[id] === 1)) continue;
   const threshold = Math.min(
     0.97,
     Math.max(
@@ -158,7 +168,7 @@ for (const id of Object.keys(variants)) {
       thresholdFor(0.5) + ((preset ? preset.calibration : CUSTOM_CALIBRATION)?.[backend] ?? 0),
     ),
   );
-  const scored = posts.map((p) => ({
+  const scored = labeled(id).map((p) => ({
     s: result.scores[p.id][`${id}#${index}`],
     y: p.labels[id] === 1,
   }));
@@ -171,7 +181,7 @@ for (const id of Object.keys(variants)) {
 
 await mkdir('eval/results', { recursive: true });
 await writeFile(
-  `eval/results/${backend}.json`,
+  `eval/results/${backend}${postsArg > 0 ? `-${basename(postsFile, '.json')}` : ''}.json`,
   `${JSON.stringify({ backend, seconds: result.seconds, rows: result.rows, threshold: THRESHOLD, report, shipped, scores: result.scores }, null, 1)}\n`,
 );
 

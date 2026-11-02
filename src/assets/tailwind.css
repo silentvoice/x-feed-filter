@@ -11,3 +11,9 @@
 :root {
   color-scheme: light dark;
 }
+
+/* Chrome gives extension pages a 12 px body font. Use the same base size in all pages. */
+body {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

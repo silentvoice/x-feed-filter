@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react';
 import { ActionPicker, Section, StrictnessSlider, Toggle } from '@/components/controls';
+import { ModelStatusLine } from '@/components/model-status';
 import { useSettings } from '@/components/use-settings';
 import { PRESETS } from '@/lib/filters/presets';
 import type { Settings } from '@/lib/settings';
@@ -94,6 +95,31 @@ export function App() {
         </select>
         <p className="mt-2 text-neutral-500 text-xs">
           The model runs on your device. Your posts never leave your computer.
+        </p>
+        <ModelStatusLine />
+      </Section>
+
+      <Section title="Evaluation (advanced)">
+        <Toggle
+          label="Save checked posts for evaluation"
+          description="Keep up to 1,000 posts that the model checks on this computer, so that you can label them and measure the filters. Off by default."
+          checked={settings.saveForEvaluation}
+          onChange={(saveForEvaluation) => update({ saveForEvaluation })}
+        />
+        <a className="text-brand-600 text-sm underline dark:text-brand-400" href="/label.html">
+          Label saved posts
+        </a>
+      </Section>
+
+      <Section title="About">
+        <p className="text-neutral-500 text-xs">
+          <a className="underline" href="/welcome.html">
+            Welcome page, privacy, and model licenses
+          </a>
+          {' · '}
+          <a className="underline" href="https://github.com/silentvoice/x-feed-filter">
+            Source code
+          </a>
         </p>
       </Section>
     </main>
