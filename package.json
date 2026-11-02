@@ -1,6 +1,6 @@
 {
   "name": "x-feed-filter",
-  "description": "Filter posts on X with plain-language rules. A small AI model runs on your device. No servers, no API keys.",
+  "description": "Lull: a calmer feed for X. Describe the posts you do not want to see. A small AI model on your device filters them out.",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -27,7 +27,8 @@
     "postinstall": "wxt prepare",
     "parity": "vitest run scripts/d1-parity",
     "bench": "vite --config bench/vite.config.ts",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "eval": "node scripts/eval.mjs"
   },
   "dependencies": {
     "@huggingface/tokenizers": "^0.2.0",

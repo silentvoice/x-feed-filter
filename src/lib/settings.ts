@@ -25,6 +25,8 @@ export const SettingsSchema = z.object({
   hidePromoted: z.boolean(),
   analyzeImages: z.boolean(),
   backend: z.enum(['auto', 'd1', 'zero-shot', 'rules-only']),
+  /** Threshold change for each filter from "Not a match" feedback. */
+  filterAdjust: z.record(z.string(), z.number()),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;
@@ -42,6 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hidePromoted: false,
   analyzeImages: true,
   backend: 'auto',
+  filterAdjust: {},
 };
 
 /** Parse stored settings. Unknown or invalid fields fall back to defaults. */

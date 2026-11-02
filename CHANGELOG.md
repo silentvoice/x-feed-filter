@@ -8,6 +8,15 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- New name and icon: Lull.
+- GitHub Pages website (`site/`).
+- Model status and download progress in the popup. The popup starts the model when it opens.
+- Zero-shot fallback model (ModernBERT, CPU) for computers without WebGPU. "Automatic" selects it.
+- Posts near the viewport go to the model first.
+- Evaluation set of 250 labeled posts and `npm run eval`.
+- Tuned wording and a calibration for each built-in filter.
+- "Not a match" button on filtered posts. It makes the matched filters less strict.
+- Daily counts and a list of recently filtered posts in the popup.
 - Content script that finds posts on x.com and handles the virtualized timeline.
 - Blur with a reason and a **Show** button, or hide, for filtered posts.
 - Pending blur until the extension checks a post.
@@ -22,6 +31,8 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Fixed
 
+- A model download that stops on a bad connection now continues from the last byte (up to four attempts).
+- The d1 model no longer stops during load on a cross-origin isolated page. d1 now always uses one WebAssembly thread.
 - Two model requests at the same time no longer hang. Model runs now go through a queue.
 - A quote post without its own text no longer uses the quoted text as its text.
 

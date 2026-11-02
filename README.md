@@ -1,11 +1,14 @@
 <div align="center">
 
-<img src="public/icon/128.png" width="96" height="96" alt="">
+<img src="assets/brand/icon.svg" width="96" height="96" alt="">
 
-# X Feed Filter
+# Lull
 
-**Remove the posts that you do not want to see on X. Write the rules in plain language.**<br>
-A small AI model runs on your computer. Your posts do not go to a server.
+**A calmer feed for X.**<br>
+Describe the posts that you do not want to see. A small AI model on your computer filters them out.<br>
+Your posts do not go to a server.
+
+[Website](https://silentvoice.github.io/x-feed-filter/) · [Roadmap](docs/roadmap.md) · [Model selection](docs/model-selection.md)
 
 [![CI](https://github.com/silentvoice/x-feed-filter/actions/workflows/ci.yml/badge.svg)](https://github.com/silentvoice/x-feed-filter/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/silentvoice/x-feed-filter/actions/workflows/codeql.yml/badge.svg)](https://github.com/silentvoice/x-feed-filter/actions/workflows/codeql.yml)
@@ -17,7 +20,7 @@ A small AI model runs on your computer. Your posts do not go to a server.
 </div>
 
 > [!NOTE]
-> This project is in early development. The on-device model works in the browser at about 50 ms for each post. The full extension is not yet tested on x.com. See the [roadmap](docs/roadmap.md).
+> This project is in early development. It works on x.com in Chrome, but it is not in the Chrome Web Store yet. See the [roadmap](docs/roadmap.md).
 
 ## Features
 
@@ -26,7 +29,7 @@ A small AI model runs on your computer. Your posts do not go to a server.
 - **Blur or hide.** By default, a filtered post is blurred. The blur shows the reason and a **Show** button. You can also remove filtered posts fully.
 - **No flash of filtered content.** New posts stay blurred until the extension checks them.
 - **Strictness control.** One slider sets how sure the model must be before it filters a post.
-- **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). The extension does not collect data. It has no server and needs no account.
+- **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). Computers without WebGPU use a smaller model on the CPU. The extension does not collect data. It has no server and needs no account.
 - **Muted words and an allowlist.** Hide posts that contain specific words. Never filter the accounts that you trust.
 
 ## Install
@@ -100,6 +103,7 @@ For more information, read the [architecture document](docs/architecture.md) and
 |---|---|
 | [Architecture](docs/architecture.md) | Components, data flow, and design decisions |
 | [Model selection](docs/model-selection.md) | The models that we compared and the model that we use |
+| [Evaluation](docs/evaluation.md) | How well each filter works, and how we measure it |
 | [Writing good filters](docs/writing-filters.md) | How to write filter descriptions that work well |
 | [Development](docs/development.md) | Set up, build, test, and debug the extension |
 | [Roadmap](docs/roadmap.md) | Milestones and status |
@@ -118,4 +122,4 @@ The source code is available under the [Apache License 2.0](LICENSE).
 
 The extension downloads model weights at runtime. The weights are not part of this repository and have their own licenses. For example, the Liquid AI d1 models use the LFM Open License v1.0. Read [NOTICE](NOTICE) and the [model selection document](docs/model-selection.md#licenses).
 
-This project is not affiliated with X Corp.
+Lull is not affiliated with, endorsed by, or sponsored by X Corp.

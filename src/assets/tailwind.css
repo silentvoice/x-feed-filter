@@ -2,6 +2,10 @@
 
 @theme {
   --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Lull brand: calm sage. */
+  --color-brand-400: #8fb3a0;
+  --color-brand-500: #5f7f6e;
+  --color-brand-600: #3f5f50;
 }
 
 :root {

@@ -116,10 +116,9 @@ export class D1Backend implements ClassifierBackend {
 
     const ort = await loadOrt();
     if (wasmPaths) ort.env.wasm.wasmPaths = wasmPaths;
-    // Extension pages are not cross-origin isolated, so WebAssembly threads are not available.
-    ort.env.wasm.numThreads = globalThis.crossOriginIsolated
-      ? Math.min(4, navigator.hardwareConcurrency)
-      : 1;
+    // The GPU does the work. Extension pages are not cross-origin isolated, so use one
+    // WebAssembly thread everywhere: with threads, the WebGPU build stops in session creation.
+    ort.env.wasm.numThreads = 1;
     this.session = await ort.InferenceSession.create(graph, {
       executionProviders: [device],
       graphOptimizationLevel: 'all',

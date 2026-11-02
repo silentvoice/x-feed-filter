@@ -87,6 +87,34 @@ test('filters matching posts with the on-device model', async () => {
   await expect(article(page, '2001')).toHaveClass(/xff-blurred/, { timeout: 30_000 });
 });
 
+test('"Not a match" shows the post and makes the filter less strict', async () => {
+  const page = await context.newPage();
+  await page.goto('https://x.com/home');
+  await expect(article(page, '1003')).toHaveClass(/xff-blurred/, { timeout: 60_000 });
+  await article(page, '1003').locator('.xff-not-match').click();
+  await expect(article(page, '1003')).not.toHaveClass(/xff-blurred/);
+  // The post stays visible after the settings change and the new check.
+  await page.waitForTimeout(3000);
+  await expect(article(page, '1003')).not.toHaveClass(/xff-blurred|xff-hidden/);
+
+  const options = await context.newPage();
+  await options.goto(`chrome-extension://${extensionId}/options.html`);
+  await expect(options.getByText('Engagement bait: less strict by 5 points')).toBeVisible();
+  await options.getByRole('button', { name: 'Reset feedback' }).click();
+  await options.close();
+  await page.close();
+});
+
+test('the popup shows the model status and the activity', async () => {
+  const popup = await context.newPage();
+  await popup.goto(`chrome-extension://${extensionId}/popup.html`);
+  await expect(popup.getByText('Liquid d1-omni-600M is ready')).toBeVisible({ timeout: 120_000 });
+  await expect(popup.getByText(/filtered of \d+ checked/)).toBeVisible();
+  await popup.getByText('Recently filtered').click();
+  await expect(popup.getByText('@moonboy')).toBeVisible();
+  await popup.close();
+});
+
 test('hides filtered posts when the action is "Hide"', async () => {
   const popup = await context.newPage();
   await popup.goto(`chrome-extension://${extensionId}/popup.html`);
