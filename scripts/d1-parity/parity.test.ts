@@ -56,6 +56,7 @@ describe.skipIf(!dir)('d1 parity with prompt.py and ONNX Runtime (Python)', () =
       const backend = new D1Backend({
         dtype,
         device: 'wasm',
+        loadOrt: () => import('onnxruntime-web/wasm'),
         loadFile: async (path) => new Uint8Array(await readFile(join(root, path))),
       });
       let worst = 0;
@@ -70,4 +71,21 @@ describe.skipIf(!dir)('d1 parity with prompt.py and ONNX Runtime (Python)', () =
     },
     300_000,
   );
+
+  it('answers requests that arrive at the same time', async () => {
+    const root = dir as string;
+    const backend = new D1Backend({
+      device: 'wasm',
+      loadOrt: () => import('onnxruntime-web/wasm'),
+      loadFile: async (path) => new Uint8Array(await readFile(join(root, path))),
+    });
+    const question: Question = { type: 'noul', instructions: 'Is this post hostile?' };
+    const results = await Promise.all([
+      backend.decide(['You are an idiot.'], [question]),
+      backend.decide(['Nice garden!'], [question]),
+      backend.decide(['Good morning.'], [question]),
+    ]);
+    expect(results).toHaveLength(3);
+    expect(results[0]?.[0]?.[0]?.[0]).toBeGreaterThan(results[1]?.[0]?.[0]?.[0] ?? 1);
+  }, 300_000);
 });

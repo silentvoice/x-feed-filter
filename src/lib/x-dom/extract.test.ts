@@ -29,6 +29,16 @@ describe('extractPost', () => {
     });
   });
 
+  it('reads a quote post that has no text of its own', () => {
+    const post = extractPost(
+      article(`
+        <a href="/bob/status/7"><time>1h</time></a>
+        <div role="link"><div data-testid="tweetText">Only the quoted text</div></div>
+      `),
+    );
+    expect(post).toMatchObject({ text: '', quotedText: 'Only the quoted text' });
+  });
+
   it('detects promoted posts', () => {
     const post = extractPost(
       article(`

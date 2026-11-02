@@ -18,14 +18,15 @@ const settings = (overrides: Partial<Settings> = {}): Settings => ({
 });
 
 describe('thresholdFor', () => {
-  it('maps strictness 0 to 0.9 and strictness 1 to 0.5', () => {
-    expect(thresholdFor(0)).toBeCloseTo(0.9);
-    expect(thresholdFor(1)).toBeCloseTo(0.5);
+  it('maps strictness 0, 0.5, and 1 to 0.85, 0.55, and 0.25', () => {
+    expect(thresholdFor(0)).toBeCloseTo(0.85);
+    expect(thresholdFor(0.5)).toBeCloseTo(0.55);
+    expect(thresholdFor(1)).toBeCloseTo(0.25);
   });
 
   it('clamps values outside 0 to 1', () => {
-    expect(thresholdFor(-1)).toBeCloseTo(0.9);
-    expect(thresholdFor(2)).toBeCloseTo(0.5);
+    expect(thresholdFor(-1)).toBeCloseTo(0.85);
+    expect(thresholdFor(2)).toBeCloseTo(0.25);
   });
 });
 
@@ -88,8 +89,9 @@ describe('verdictFromScores', () => {
   ];
 
   it('hides when a score reaches the threshold and sorts reasons by score', () => {
-    const verdict = verdictFromScores('1', { a: 0.75, b: 0.95 }, filters, 0.5);
+    const verdict = verdictFromScores('1', { a: 0.6, b: 0.95 }, filters, 0.5);
     expect(verdict).toMatchObject({ hidden: true, reasons: ['B', 'A'], score: 0.95 });
+    expect(verdictFromScores('1', { a: 0.5 }, filters, 0.5).hidden).toBe(false);
   });
 
   it('shows the post when every score is below the threshold', () => {

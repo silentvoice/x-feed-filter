@@ -24,7 +24,8 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     .then((scores) => sendResponse({ scores } satisfies OffscreenClassifyResponse))
     .catch((error: unknown) => {
       console.error('[x-feed-filter] model error', error);
-      sendResponse({ scores: [] } satisfies OffscreenClassifyResponse);
+      const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      sendResponse({ scores: [], error: message } satisfies OffscreenClassifyResponse);
     });
   return true;
 });

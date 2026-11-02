@@ -26,7 +26,8 @@
     "check": "npm run lint && npm run typecheck && npm run test",
     "postinstall": "wxt prepare",
     "parity": "vitest run scripts/d1-parity",
-    "bench": "vite --config bench/vite.config.ts"
+    "bench": "vite --config bench/vite.config.ts",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@huggingface/tokenizers": "^0.2.0",
@@ -37,6 +38,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.4",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

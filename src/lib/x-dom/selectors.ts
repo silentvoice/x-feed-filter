@@ -9,6 +9,8 @@ export const SELECTORS = {
   userName: '[data-testid="User-Name"]',
   permalink: 'a[href*="/status/"]:has(time)',
   image: '[data-testid="tweetPhoto"] img',
+  /** Box of a quoted post inside a post. */
+  quote: 'div[role="link"]',
   /** Container of one timeline row. X virtualizes these rows. */
   cell: '[data-testid="cellInnerDiv"]',
 } as const;

@@ -18,5 +18,15 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Liquid AI d1-omni-600M backend: a TypeScript port of the d1 prompt format and ONNX Runtime Web on WebGPU (4-bit, about 49 ms for each post with 5 filters on Apple M5 Max).
 - Model download with Cache Storage.
 - d1 parity test against the Python reference, and a benchmark page.
+- End-to-end tests in Chromium with Playwright (`npm run e2e`).
+
+### Fixed
+
+- Two model requests at the same time no longer hang. Model runs now go through a queue.
+- A quote post without its own text no longer uses the quoted text as its text.
+
+### Changed
+
+- Strictness now maps to thresholds from 0.85 to 0.25 (0.55 by default). On real posts, on-topic scores are often 0.25 to 0.98.
 
 [Unreleased]: https://github.com/silentvoice/x-feed-filter/commits/main

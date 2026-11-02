@@ -32,6 +32,11 @@ export interface D1Options {
   maxLength?: number;
   /** Maximum padded tokens in one model run. */
   maxBatchTokens?: number;
+  /**
+   * Load ONNX Runtime Web. Default: the WebGPU build. Its CPU provider cannot
+   * run this model, so CPU callers pass `() => import('onnxruntime-web/wasm')`.
+   */
+  loadOrt?: () => Promise<typeof Ort>;
   /** Read one model file, relative to `baseUrl`. Default: download it and keep it in Cache Storage. */
   loadFile?: (path: string, onProgress?: (progress: number) => void) => Promise<Uint8Array>;
 }
@@ -52,6 +57,8 @@ export class D1Backend implements ClassifierBackend {
   private temperatures: Record<string, number> = {};
   private loading: Promise<void> | null = null;
   private progress = 0;
+  /** ONNX Runtime Web cannot run one session twice at the same time. A second run hangs. */
+  private runQueue: Promise<unknown> = Promise.resolve();
 
   constructor(options: D1Options = {}) {
     this.options = {
@@ -61,6 +68,7 @@ export class D1Backend implements ClassifierBackend {
       wasmPaths: '',
       maxLength: 512,
       maxBatchTokens: 8192,
+      loadOrt: () => import('onnxruntime-web/webgpu'),
       loadFile: (path, onProgress) => fetchCached(`${this.options.baseUrl}/${path}`, onProgress),
       ...options,
     };
@@ -84,7 +92,7 @@ export class D1Backend implements ClassifierBackend {
   }
 
   private async doLoad(onProgress?: (progress: number) => void): Promise<void> {
-    const { dtype, device, wasmPaths, loadFile } = this.options;
+    const { dtype, device, wasmPaths, loadFile, loadOrt } = this.options;
     const file = MODEL_FILE[dtype];
 
     const [tokenizerJson, tokenizerConfig, config] = await Promise.all(
@@ -106,8 +114,7 @@ export class D1Backend implements ClassifierBackend {
       loadFile(`onnx/${file}.onnx_data`, report),
     ]);
 
-    // The WebGPU build also has the WebAssembly (CPU) execution provider.
-    const ort = await import('onnxruntime-web/webgpu');
+    const ort = await loadOrt();
     if (wasmPaths) ort.env.wasm.wasmPaths = wasmPaths;
     // Extension pages are not cross-origin isolated, so WebAssembly threads are not available.
     ort.env.wasm.numThreads = globalThis.crossOriginIsolated
@@ -198,7 +205,9 @@ export class D1Backend implements ClassifierBackend {
       marker_mask: new ort.Tensor('int64', markerMask, [b, k]),
       qtype: new ort.Tensor('int64', qtype, [b]),
     };
-    const { logits } = await session.run(feeds);
+    const run = this.runQueue.then(() => session.run(feeds));
+    this.runQueue = run.catch(() => {});
+    const { logits } = await run;
     const data = (logits as Ort.Tensor).data as Float32Array;
     return rows.map((row, i) =>
       probabilities(row.question, data.subarray(i * k, (i + 1) * k), this.temperatures),

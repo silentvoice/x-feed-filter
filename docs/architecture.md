@@ -75,10 +75,12 @@ Each row is about 75 tokens: the post text, the filter question, and two answer 
 One strictness value (0 to 1) controls all filters:
 
 ```
-threshold = 0.9 − 0.4 × strictness
+threshold = 0.85 − 0.6 × strictness
 ```
 
-Strictness 0 filters a post only when the probability is 0.9 or more. Strictness 1 filters a post when the probability is 0.5 or more. Later releases can add a threshold for each filter.
+Strictness 0 filters a post only when the probability is 0.85 or more. The default strictness (0.5) filters a post when the probability is 0.55 or more. Strictness 1 filters a post when the probability is 0.25 or more.
+
+On real posts, d1 gives off-topic posts a probability of about 0 to 0.1. It gives on-topic posts 0.25 to 0.98. These values are provisional. The evaluation set of milestone M3 will tune them. Later releases can add a threshold for each filter.
 
 ### Cache
 

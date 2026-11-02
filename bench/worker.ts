@@ -33,6 +33,8 @@ async function run(dtype: D1Dtype, device: 'webgpu' | 'wasm') {
     dtype,
     device,
     wasmPaths: '/ort/',
+    loadOrt: () =>
+      device === 'webgpu' ? import('onnxruntime-web/webgpu') : import('onnxruntime-web/wasm'),
     loadFile: async (path) => new Uint8Array(await (await fetch(`/model/${path}`)).arrayBuffer()),
   });
 

@@ -58,6 +58,7 @@ This document tells you how to set up, build, test, and debug the extension.
 | `npm run check` | Run lint, the type check, and the tests. CI runs this command. |
 | `npm run bench` | Start the d1 benchmark page on `http://localhost:5199` |
 | `npm run parity` | Compare the d1 TypeScript port with the Python reference |
+| `npm run e2e` | Run the end-to-end tests in Chromium. Run `npm run build` first. |
 
 ## Project structure
 
@@ -158,6 +159,33 @@ Do this procedure if you change `scripts/d1-parity/cases.json`.
 2. Open `http://localhost:5199` in Chrome.
 3. Click a **Run** button.
 4. Keep the page in view while the benchmark runs. Chrome slows down pages that are not in view.
+
+## Run the end-to-end tests
+
+The end-to-end tests load the built extension into Chromium. They use a copy of the X timeline markup (`e2e/fixtures/x-home.html`) at `https://x.com/home`. They check the full pipeline: post detection, the d1 model on WebGPU, blur, **Show**, and hide.
+
+> [!NOTE]
+> CI does not run these tests, because CI computers do not have WebGPU.
+
+1. Install the Playwright browser one time:
+
+   ```bash
+   npx playwright install chromium
+   ```
+
+2. Build the extension:
+
+   ```bash
+   npm run build
+   ```
+
+3. Run the tests. Set `XFF_PROFILE_DIR` to keep the downloaded model between runs:
+
+   ```bash
+   XFF_PROFILE_DIR=.cache/e2e-profile npm run e2e
+   ```
+
+The first run downloads the model (about 245 MB). A Chromium window opens during the test.
 
 ## Change X selectors
 

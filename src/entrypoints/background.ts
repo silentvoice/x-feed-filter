@@ -57,7 +57,10 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     posts: pending,
     filters,
   };
-  const { scores } = (await browser.runtime.sendMessage(request)) as OffscreenClassifyResponse;
+  const { scores, error } = (await browser.runtime.sendMessage(
+    request,
+  )) as OffscreenClassifyResponse;
+  if (error) console.warn('[x-feed-filter] model error:', error);
   pending.forEach((post, i) => {
     const verdict = verdictFromScores(post.id, scores[i] ?? {}, filters, settings.strictness);
     cache.set(post.id, key, verdict);

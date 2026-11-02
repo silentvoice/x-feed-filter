@@ -22,6 +22,8 @@ export interface OffscreenClassifyRequest {
 
 export interface OffscreenClassifyResponse {
   scores: FilterScores[];
+  /** Set when the model failed. The posts stay visible. */
+  error?: string;
 }
 
 export function isClassifyRequest(message: unknown): message is ClassifyRequest {

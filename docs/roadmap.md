@@ -32,7 +32,8 @@ This document gives the milestones of the project and their status.
 
 - ✅ d1 backend in the offscreen document
 - ✅ Weights in Cache Storage
-- ⬜ Test the full extension on x.com
+- ✅ Test the full extension on x.com (logged in, real timeline)
+- ✅ End-to-end tests in Chromium
 - ⬜ Model download with progress in the popup
 - ✅ Batches of (post, filter) pairs
 - ⬜ Posts near the viewport first (`IntersectionObserver`)
