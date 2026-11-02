@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home / X (test fixture)</title>
+    <style>
+      body { font: 15px/1.4 system-ui, sans-serif; margin: 0 auto; max-width: 600px; }
+      article { border-bottom: 1px solid #eee; padding: 12px 16px; }
+      [data-testid="User-Name"] { font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <!-- Test fixture: the parts of the X timeline markup that the extension reads. -->
+    <main id="timeline"></main>
+    <script>
+      const POSTS = [
+        ['angrydev', '1001', 'Anyone who still uses tabs is a clown and should be fired. Absolutely pathetic.'],
+        ['gardenlady', '1002', 'My tomatoes finally came in this week. Here is the first harvest!'],
+        ['growthhacker', '1003', 'Like and repost if you agree! Follow me for more tips every day.'],
+        ['moonboy', '1004', '$PEPE2 airdrop is LIVE. Connect your wallet now, first 1000 get 10x. Do not miss this.'],
+        ['shipit', '1005', 'Just shipped dark mode for our app. Took longer than expected but really happy with it.'],
+      ];
+
+      function render(author, id, text) {
+        const cell = document.createElement('div');
+        cell.dataset.testid = 'cellInnerDiv';
+        cell.innerHTML = `
+          <article data-testid="tweet" tabindex="0">
+            <div>
+              <div data-testid="User-Name"><span>${author}</span> <span>@${author}</span></div>
+              <a href="/${author}/status/${id}"><time datetime="2026-11-01T12:00:00Z">1h</time></a>
+              <div data-testid="tweetText" lang="en"><span>${text}</span></div>
+            </div>
+          </article>`;
+        return cell;
+      }
+
+      const timeline = document.getElementById('timeline');
+      for (const post of POSTS.slice(0, 3)) timeline.append(render(...post));
+
+      // X adds posts while the user scrolls.
+      setTimeout(() => {
+        for (const post of POSTS.slice(3)) timeline.append(render(...post));
+      }, 500);
+
+      // X reuses an article element for a different post. Tests call this.
+      window.recycleFirstPost = (author, id, text) => {
+        const article = timeline.querySelector('article');
+        article.querySelector('a').setAttribute('href', `/${author}/status/${id}`);
+        article.querySelector('[data-testid="tweetText"] span').textContent = text;
+        article.querySelector('[data-testid="User-Name"]').textContent = author;
+      };
+    </script>
+  </body>
+</html>

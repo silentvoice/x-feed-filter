@@ -56,6 +56,9 @@ This document tells you how to set up, build, test, and debug the extension.
 | `npm test` | Run the unit tests once |
 | `npm run test:watch` | Run the unit tests when a file changes |
 | `npm run check` | Run lint, the type check, and the tests. CI runs this command. |
+| `npm run bench` | Start the d1 benchmark page on `http://localhost:5199` |
+| `npm run parity` | Compare the d1 TypeScript port with the Python reference |
+| `npm run e2e` | Run the end-to-end tests in Chromium. Run `npm run build` first. |
 
 ## Project structure
 
@@ -70,12 +73,15 @@ src/
   components/           Shared React components
   lib/
     classifier/         ClassifierBackend interface and backends
+      d1/               Liquid AI d1 prompt port and ONNX Runtime backend
     filters/            Built-in filters and the verdict logic
     x-dom/              X selectors and post extraction
     settings.ts         Settings schema and defaults
     storage.ts          Read and write settings
     messaging.ts        Message types between components
     verdict-cache.ts    Verdict cache
+bench/                  d1 benchmark page (Vite)
+scripts/d1-parity/      d1 parity cases, Python reference, and parity test
 docs/                   Documentation (ASD-STE100)
 ```
 
@@ -98,6 +104,88 @@ docs/                   Documentation (ASD-STE100)
 1. Open `chrome://inspect/#other`.
 2. Find `offscreen.html`.
 3. Click **inspect**.
+
+## Test the d1 model
+
+The d1 tests need the model files on your computer. They are not in the repository.
+
+### Download the model files
+
+1. Make a folder for the model, for example `models/d1`. Git ignores the `models/` folder.
+2. Download these files from [onnx-community/d1-omni-600M-ONNX](https://huggingface.co/onnx-community/d1-omni-600M-ONNX) into the folder. Keep the `onnx/` subfolder.
+   - `tokenizer.json`, `tokenizer_config.json`, `config.json`
+   - `onnx/model_q4.onnx`, `onnx/model_q4.onnx_data`
+   - `onnx/model_quantized.onnx`, `onnx/model_quantized.onnx_data`
+
+### Run the parity test
+
+The parity test compares the TypeScript port with `scripts/d1-parity/expected-q8.json` and `expected-q4.json`.
+
+1. Run the test:
+
+   ```bash
+   D1_MODEL_DIR=models/d1 npm run parity
+   ```
+
+2. Make sure that all tests pass. The largest difference must be less than 0.01.
+
+### Make new reference values
+
+Do this procedure if you change `scripts/d1-parity/cases.json`.
+
+1. Download `prompt.py` from [LiquidAI/d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M/blob/main/prompt.py).
+2. Install the Python packages `onnxruntime`, `numpy`, and `tokenizers`.
+3. Go to the `scripts/d1-parity` folder.
+4. Make the 8-bit reference:
+
+   ```bash
+   python -I reference.py <path to prompt.py> <model folder> cases.json expected-q8.json
+   ```
+
+5. Make the 4-bit reference:
+
+   ```bash
+   python -I reference.py <path to prompt.py> <model folder> cases.json expected-q4.json model_q4
+   ```
+
+### Run the benchmark
+
+1. Start the benchmark server:
+
+   ```bash
+   D1_MODEL_DIR=models/d1 npm run bench
+   ```
+
+2. Open `http://localhost:5199` in Chrome.
+3. Click a **Run** button.
+4. Keep the page in view while the benchmark runs. Chrome slows down pages that are not in view.
+
+## Run the end-to-end tests
+
+The end-to-end tests load the built extension into Chromium. They use a copy of the X timeline markup (`e2e/fixtures/x-home.html`) at `https://x.com/home`. They check the full pipeline: post detection, the d1 model on WebGPU, blur, **Show**, and hide.
+
+> [!NOTE]
+> CI does not run these tests, because CI computers do not have WebGPU.
+
+1. Install the Playwright browser one time:
+
+   ```bash
+   npx playwright install chromium
+   ```
+
+2. Build the extension:
+
+   ```bash
+   npm run build
+   ```
+
+3. Run the tests. Set `XFF_PROFILE_DIR` to keep the downloaded model between runs:
+
+   ```bash
+   XFF_PROFILE_DIR=.cache/e2e-profile npm run e2e
+   ```
+
+The first run downloads the model (about 245 MB). A Chromium window opens during the test.
 
 ## Change X selectors
 

@@ -1,0 +1,206 @@
+[
+  {
+    "state": "Hi team, the invoice for September is attached. Please pay by Friday.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this email ask for a payment?"
+    },
+    "ids": [
+      1, 17, 42120, 3410, 521, 779, 60827, 1139, 875, 4526, 856, 12930, 523, 13831, 4025, 968,
+      16012, 523, 18, 29589, 1033, 8355, 3452, 875, 768, 16655, 540, 19, 16, 4831, 535, 1295, 521,
+      779, 8294, 2177, 1014, 3965, 20, 19, 16, 3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [28, 40],
+    "probabilities": [0.9811581949526048, 0.01884180504739525]
+  },
+  {
+    "state": "Hi! Just wanted to say thanks for lunch yesterday.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this email ask for a payment?"
+    },
+    "ids": [
+      1, 17, 42120, 510, 5947, 7050, 811, 2992, 14165, 875, 21703, 30524, 523, 18, 29589, 1033,
+      8355, 3452, 875, 768, 16655, 540, 19, 16, 4831, 535, 1295, 521, 779, 8294, 2177, 1014, 3965,
+      20, 19, 16, 3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [23, 35],
+    "probabilities": [1.0000072600897188e-5, 0.9999899999273991]
+  },
+  {
+    "state": "The checkout page has been down for two hours and customers are complaining on social media.",
+    "question": {
+      "type": "score",
+      "instructions": "How urgent is this?",
+      "criteria": ["not urgent", "somewhat urgent", "urgent", "critical"]
+    },
+    "ids": [
+      1, 17, 1098, 64210, 4738, 1178, 1381, 2208, 875, 1547, 4934, 810, 11200, 938, 6537, 11857,
+      884, 2603, 5075, 523, 18, 4023, 31149, 856, 1033, 540, 19, 16, 2119, 730, 525, 535, 1014,
+      31149, 20, 19, 16, 2119, 730, 526, 535, 14171, 31149, 20, 19, 16, 2119, 730, 527, 535, 31149,
+      20, 19, 16, 2119, 730, 528, 535, 6250, 20, 21
+    ],
+    "markers": [27, 36, 45, 53],
+    "probabilities": [
+      0.09529005006545027, 0.48809003938073947, 0.35677714263814786, 0.05984276791566246
+    ]
+  },
+  {
+    "state": "User: cancel my subscription right now, this is the third time I'm asking",
+    "question": {
+      "type": "choice",
+      "instructions": "What does the user want?",
+      "criteria": {
+        "cancel": "End the subscription",
+        "refund": "Get money back",
+        "support": "Help with a problem",
+        "other": "Something else"
+      }
+    },
+    "ids": [
+      1, 17, 9415, 535, 23496, 1727, 35575, 2084, 2166, 521, 1033, 856, 779, 4976, 1394, 859, 6217,
+      14065, 18, 3493, 2177, 779, 5196, 2477, 540, 19, 16, 23496, 535, 6001, 779, 35575, 20, 19, 16,
+      53467, 535, 7003, 4636, 1892, 20, 19, 16, 2258, 535, 18525, 916, 768, 3220, 20, 19, 16, 1312,
+      535, 39781, 3581, 20, 21
+    ],
+    "markers": [26, 34, 42, 51],
+    "probabilities": [
+      0.9992877426472915, 1.7156518439975954e-5, 0.00013467297769382454, 0.0005604278565746759
+    ]
+  },
+  {
+    "state": "Post by @angrydev:\nAnyone who still uses tabs is a clown and should be fired. Absolutely pathetic.",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post hostile, contemptuous, or written mainly to make readers angry or outraged?"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 1106, 1158, 14687, 1334, 15803, 1174, 1316, 2510, 5582, 61835, 856,
+      768, 1064, 1272, 810, 1753, 874, 23256, 523, 14896, 828, 45873, 1703, 8776, 523, 18, 4940,
+      1033, 2375, 36149, 521, 57509, 13679, 521, 933, 4985, 9251, 811, 1825, 13040, 23732, 933,
+      1230, 2379, 791, 540, 19, 16, 4831, 535, 1295, 521, 779, 8294, 2177, 1014, 3965, 20, 19, 16,
+      3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [52, 64],
+    "probabilities": [0.9044045278145835, 0.09559547218541664]
+  },
+  {
+    "state": "Post by @gardenlady:\nMy tomatoes finally came in this week. Here is the first harvest!\nImages: A basket of red tomatoes",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post hostile, contemptuous, or written mainly to make readers angry or outraged?"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 580, 23333, 585, 5597, 1334, 8570, 29702, 8348, 4010, 797, 1033,
+      3025, 523, 6567, 856, 779, 1509, 12585, 2660, 45548, 535, 835, 29517, 803, 3460, 29702, 18,
+      4940, 1033, 2375, 36149, 521, 57509, 13679, 521, 933, 4985, 9251, 811, 1825, 13040, 23732,
+      933, 1230, 2379, 791, 540, 19, 16, 4831, 535, 1295, 521, 779, 8294, 2177, 1014, 3965, 20, 19,
+      16, 3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [53, 65],
+    "probabilities": [0.0014810125909873349, 0.9985189874090128]
+  },
+  {
+    "state": "Post by @growthhacker:\nLike and repost if you agree! Follow me for more tips every day.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post mainly ask for likes, reposts, follows, or replies (for example \"like if you agree\" or \"follow for more\")?"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 53979, 581, 32551, 1334, 18789, 810, 4228, 1000, 1288, 1010, 11667,
+      510, 29564, 1123, 875, 1209, 11898, 1973, 2285, 523, 18, 29589, 1033, 2375, 9251, 3452, 875,
+      26359, 521, 4228, 50138, 521, 7353, 521, 933, 840, 6750, 843, 2732, 2623, 997, 7038, 1288,
+      1010, 11667, 511, 933, 997, 63266, 875, 1209, 6681, 540, 19, 16, 4831, 535, 1295, 521, 779,
+      8294, 2177, 1014, 3965, 20, 19, 16, 3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [59, 71],
+    "probabilities": [0.9905854574262111, 0.009414542573788863]
+  },
+  {
+    "state": "Post by @moonboy:\n$PEPE2 airdrop is LIVE. Connect your wallet now, first 1000 get 10x. Do not miss this.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post promote a cryptocurrency, token, NFT, airdrop, or giveaway, or look like a scam?"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 586, 4807, 28720, 1334, 513, 6357, 6357, 527, 768, 2051, 2027, 856,
+      903, 21219, 523, 16484, 1180, 51021, 2166, 521, 1509, 730, 2096, 525, 1673, 730, 1155, 597,
+      523, 4112, 1014, 5014, 1033, 523, 18, 29589, 1033, 2375, 9679, 768, 57863, 521, 18069, 521,
+      928, 15150, 521, 768, 2051, 2027, 521, 933, 3619, 18809, 521, 933, 2144, 1672, 768, 1528, 831,
+      540, 19, 16, 4831, 535, 1295, 521, 779, 8294, 2177, 1014, 3965, 20, 19, 16, 3347, 535, 18672,
+      521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [68, 80],
+    "probabilities": [0.9824000637863958, 0.01759993621360431]
+  },
+  {
+    "state": "Post by @newsdesk:\nThe Senate passed the infrastructure bill 68-32 on Tuesday after weeks of debate.",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post about politics, elections, politicians, or political parties?"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 22815, 10051, 584, 1334, 1098, 16104, 7410, 779, 12350, 5363, 730,
+      3199, 522, 2925, 884, 22092, 1720, 6272, 803, 12866, 523, 18, 4940, 1033, 2375, 1337, 13032,
+      521, 16302, 521, 17838, 521, 933, 4665, 9888, 540, 19, 16, 4831, 535, 1295, 521, 779, 8294,
+      2177, 1014, 3965, 20, 19, 16, 3347, 535, 18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [42, 54],
+    "probabilities": [0.40861464323043306, 0.5913853567695669]
+  },
+  {
+    "state": "Post by @hrlead:\nWe let go of 12% of the company today. Here is how we supported the people affected.",
+    "question": {
+      "type": "noul",
+      "instructions": "posts about layoffs"
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 1692, 58125, 1334, 2584, 2944, 1638, 803, 730, 1374, 514, 803, 779,
+      4129, 4008, 523, 6567, 856, 1531, 1023, 7951, 779, 1519, 7551, 523, 18, 11894, 592, 1337,
+      4130, 29120, 19, 16, 4831, 535, 1295, 521, 779, 8294, 2177, 1014, 3965, 20, 19, 16, 3347, 535,
+      18672, 521, 779, 8294, 10995, 20, 21
+    ],
+    "markers": [36, 48],
+    "probabilities": [0.9482709075113602, 0.05172909248863968]
+  },
+  {
+    "state": "Post by @x:\nEscape test <|mask|> and <|reserved_7|> must not become special tokens.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post contain <|mask|>?",
+      "criteria": {
+        "true": "it does",
+        "false": "it does not"
+      }
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 597, 1334, 546, 9722, 1927, 1428, 636, 609, 37998, 636, 609, 539,
+      810, 1428, 636, 609, 1276, 20886, 572, 532, 636, 609, 539, 2447, 1014, 3117, 3429, 40544, 523,
+      18, 29589, 1033, 2375, 3948, 1428, 636, 609, 37998, 636, 609, 539, 540, 19, 16, 4831, 535,
+      936, 2177, 1014, 20, 19, 16, 3347, 535, 936, 2177, 20, 21
+    ],
+    "markers": [48, 56],
+    "probabilities": [0.7039458262366225, 0.2960541737633775]
+  },
+  {
+    "state": "Post by @poet:\nこんにちは 🌸 café naïve — mixed scripts and emoji.\nQuoted post: A thread about Unicode.",
+    "question": {
+      "type": "choice",
+      "instructions": "What language is most of this post in?",
+      "criteria": {
+        "english": "",
+        "japanese": "Mostly Japanese text",
+        "french": "Mostly French text"
+      }
+    },
+    "ids": [
+      1, 17, 10657, 968, 2263, 2325, 813, 1334, 55217, 1262, 3939, 1425, 23805, 744, 626, 35499,
+      2116, 6838, 1124, 2180, 10372, 39280, 810, 1355, 588, 3966, 819, 7491, 10192, 2375, 535, 835,
+      12861, 1337, 1289, 40039, 523, 18, 3493, 3869, 856, 1529, 803, 1033, 2375, 797, 540, 19, 16,
+      48103, 20, 19, 16, 41035, 3391, 535, 6109, 876, 7815, 3304, 20, 19, 16, 792, 4693, 535, 6109,
+      876, 5271, 3304, 20, 21
+    ],
+    "markers": [48, 52, 62],
+    "probabilities": [0.7271304768643002, 0.15859495270511945, 0.11427457043058022]
+  }
+]

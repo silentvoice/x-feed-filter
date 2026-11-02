@@ -22,3 +22,16 @@ models/
 .idea
 .DS_Store
 *.sw?
+
+# Local Claude Code preview config
+.claude/launch.json
+
+# Playwright output
+test-results/
+playwright-report/
+
+# Local debug scripts
+e2e/.*.mjs
+
+# Local caches
+.cache/

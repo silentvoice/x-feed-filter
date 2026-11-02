@@ -1,4 +1,5 @@
 import { type BackendId, type ClassifierBackend, RulesOnlyBackend } from '@/lib/classifier/backend';
+import { D1Backend } from '@/lib/classifier/d1/d1-backend';
 import { isOffscreenRequest, type OffscreenClassifyResponse } from '@/lib/messaging';
 
 const backends = new Map<BackendId, ClassifierBackend>();
@@ -6,9 +7,9 @@ const backends = new Map<BackendId, ClassifierBackend>();
 function getBackend(id: BackendId): ClassifierBackend {
   let backend = backends.get(id);
   if (!backend) {
-    // TODO(M0): add the d1-omni-600M backend (ONNX Runtime Web + WebGPU).
-    // TODO(M5): add the zero-shot fallback backend (ModernBERT, Transformers.js).
-    backend = new RulesOnlyBackend();
+    // TODO(M2): add the zero-shot fallback backend (ModernBERT, Transformers.js).
+    // The ONNX Runtime `.wasm` file ships in the extension package. Manifest V3 does not permit remote code.
+    backend = id === 'd1' ? new D1Backend() : new RulesOnlyBackend();
     backends.set(id, backend);
   }
   return backend;
@@ -23,7 +24,8 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     .then((scores) => sendResponse({ scores } satisfies OffscreenClassifyResponse))
     .catch((error: unknown) => {
       console.error('[x-feed-filter] model error', error);
-      sendResponse({ scores: [] } satisfies OffscreenClassifyResponse);
+      const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      sendResponse({ scores: [], error: message } satisfies OffscreenClassifyResponse);
     });
   return true;
 });

@@ -21,7 +21,7 @@ The language is English only for the first release.
 
 | Role | Model | Download | License |
 |---|---|---|---|
-| Default (text) | [`onnx-community/d1-omni-600M-ONNX`](https://huggingface.co/onnx-community/d1-omni-600M-ONNX), 8-bit text graph | about 406 MB | LFM Open License v1.0 |
+| Default (text) | [`onnx-community/d1-omni-600M-ONNX`](https://huggingface.co/onnx-community/d1-omni-600M-ONNX), 4-bit text graph (`model_q4`) | about 245 MB | LFM Open License v1.0 |
 | Fallback (text) | [`MoritzLaurer/ModernBERT-base-zeroshot-v2.0`](https://huggingface.co/MoritzLaurer/ModernBERT-base-zeroshot-v2.0), q4f16 | about 140 MB | Apache-2.0 |
 | Images (optional, later) | [`onnx-community/Qwen3.5-0.8B-ONNX`](https://huggingface.co/onnx-community/Qwen3.5-0.8B-ONNX) with vision | about 650 MB | Apache-2.0 |
 
@@ -29,7 +29,7 @@ The language is English only for the first release.
 
 The Liquid AI d1 models are decision models. They are not chat models. They do not generate text. They read a post and a set of named questions. Then they give a calibrated probability for each answer in one forward pass. This is exactly the task of this extension: each filter is a yes/no question about a post.
 
-- **Size.** The 8-bit text graph is about 406 MB. The 4-bit graph is about 244 MB, but it is less accurate.
+- **Size.** The 4-bit text graph is about 245 MB. The 8-bit graph is about 406 MB.
 - **Accuracy.** Liquid AI reports 95.8 on Civil Comments (moderation) and 86.1 on MASSIVE intent. These numbers are from the vendor. We must confirm them on our own data.
 - **Speed.** It does not decode tokens. We can put many (post, filter) pairs into one batch.
 - **Calibration.** The model applies a temperature for each question type to the text answers. Thus, one strictness slider can work for all filters.
@@ -50,11 +50,62 @@ The vision part of d1-omni-600M is weak (ImajevBench 21.7) and is not calibrated
 2. **Next:** read the text in screenshots with on-device text recognition. Add that text to the model input.
 3. **Optional:** use Qwen3.5-0.8B with vision for posts that have images. Read the probabilities of the "Yes" and "No" tokens. Cache the result for each image URL.
 
+## Measurements (milestone M0)
+
+Date: 2026-11-01. Computer: Apple M5 Max (40 GPU cores), Chrome 152, ONNX Runtime Web 1.31.1. The benchmark runs in a Web Worker. Each row is one (post, filter) pair of about 75 tokens.
+
+### Correctness
+
+The TypeScript port gives the same result as the Python original (`prompt.py`) and ONNX Runtime for Python on the same graph.
+
+| Check | 8-bit | 4-bit |
+|---|---|---|
+| Token IDs and marker positions (12 cases) | Same | Same |
+| Probabilities, WebAssembly vs Python CPU (max difference) | 0.00000 | 0.00000 |
+| Probabilities, WebGPU vs Python CPU (max difference) | 0.00001 | 0.00001 |
+
+### Speed
+
+| Batch | 8-bit, WebGPU | 4-bit, WebGPU | 8-bit, WebAssembly (1 thread) |
+|---|---|---|---|
+| 1 post × 1 filter | 167 ms | 20 ms | 1102 ms |
+| 1 post × 5 filters | 616 ms | 55 ms | 4749 ms |
+| 8 posts × 5 filters | 4641 ms | 392 ms | not measured |
+| Time for each post (5 filters) | 580 ms | **49 ms** | about 4750 ms |
+
+The 4-bit graph is about 12 times faster on WebGPU. ONNX Runtime has fast WebGPU kernels for 4-bit `MatMulNBits`, but not for 8-bit. The model loads in less than 1 second from the cache.
+
+### 4-bit compared with 8-bit
+
+| Case type | Largest difference |
+|---|---|
+| Filter questions on typical posts (7 cases) | 0.050 |
+| All 12 cases, including edge cases | 0.561 |
+
+The large differences occur only on two edge cases: a post that contains special token syntax, and a question about a post with mixed languages. On these cases, the 8-bit answer was also uncertain.
+
+**Decision:** use the 4-bit graph as the default. The milestone M3 evaluation set must confirm that the accuracy is sufficient on real posts.
+
+### Sample scores (4-bit, WebGPU)
+
+| Post | Negativity | Engagement bait | Politics | Crypto |
+|---|---|---|---|---|
+| "Anyone who still uses tabs is a clown and should be fired." | **0.89** | 0.17 | 0.11 | 0.01 |
+| "Like and repost if you agree! Follow me for more tips." | 0.01 | **0.99** | 0.01 | 0.03 |
+| "$PEPE2 airdrop is LIVE. Connect your wallet now." | 0.03 | 0.22 | 0.02 | **0.94** |
+| "The Senate passed the infrastructure bill 68-32." | 0.02 | 0.15 | 0.42 | 0.00 |
+| "My tomatoes finally came in this week." | 0.00 | 0.17 | 0.00 | 0.01 |
+
+The politics filter gives only 0.42 for a clear political post. Milestone M3 must tune the description of this filter.
+
+> [!NOTE]
+> A base Apple M1 GPU is about 5 to 8 times slower than an M5 Max. We expect about 250 to 400 ms for each post with 5 filters. This must be measured.
+
 ## Candidates
 
 | Model | Download (approx.) | Images | Notes |
 |---|---|---|---|
-| Liquid AI d1-omni-600M | 406 MB (q8 text) | Weak | Decision model, calibrated yes/no. **Selected.** |
+| Liquid AI d1-omni-600M | 245 MB (q4 text) | Weak | Decision model, calibrated yes/no. **Selected.** |
 | Liquid AI d1-2B | 1.95 GB | Yes | More accurate. Too large. |
 | ModernBERT-base zero-shot v2.0 | 140 MB | No | NLI pipeline in Transformers.js. **Fallback.** |
 | ModernBERT-large zero-shot v2.0 | 297 MB | No | More accurate than base. |
@@ -72,10 +123,10 @@ The vision part of d1-omni-600M is weak (ImajevBench 21.7) and is not calibrated
 
 There is no Transformers.js pipeline for d1 models. The integration is:
 
-1. Use the Transformers.js tokenizer for the model.
-2. Build the prompt with the d1 special tokens and `<|mask|>` markers. This is a port of `prompt.py` from the model repository.
-3. Run the ONNX graph with `onnxruntime-web/webgpu`. Bundle the WebAssembly files in the extension, because Manifest V3 does not permit remote code.
-4. Read the logits at the marker positions. Apply softmax and the calibration temperature from `config.json`.
+1. Load the tokenizer with `@huggingface/tokenizers`.
+2. Build the prompt with the d1 special tokens and `<|mask|>` markers (`src/lib/classifier/d1/prompt.ts`). This is a port of `prompt.py` from the model repository.
+3. Run the ONNX graph with `onnxruntime-web/webgpu` (`src/lib/classifier/d1/d1-backend.ts`). The WebAssembly file is in the extension package, because Manifest V3 does not permit remote code.
+4. Read the logits at the marker positions. Divide them by the calibration temperature from `config.json`. Then apply softmax.
 
 Download the weights from Hugging Face on first use. Store them in Cache Storage. Do not bundle the weights in the extension package.
 
@@ -92,11 +143,9 @@ Download the weights from Hugging Face on first use. Store them in Cache Storage
 
 ## Open questions
 
-These items need measurements in milestone M0:
-
-- The real latency of d1-omni-600M on Apple M1 to M4 with WebGPU, for a batch of 8 posts and 5 filters.
-- The accuracy difference between the 8-bit and the 4-bit text graphs on posts from X.
-- The best default threshold for each built-in filter.
+- The latency on Apple M1 to M4.
+- The accuracy of the 4-bit graph on a labeled set of real posts (milestone M3).
+- The best default threshold for each built-in filter (milestone M3).
 - The accuracy of `kev-0.6b` from [open-jev](https://github.com/nico-martin/open-jev) (MIT) on the same evaluation set.
 
 ## Sources

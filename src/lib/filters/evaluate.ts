@@ -11,10 +11,13 @@ export function activeFilters(settings: Settings): FilterQuestion[] {
 
 /**
  * Map strictness to a probability threshold.
- * Strictness 0 hides at P >= 0.9. Strictness 1 hides at P >= 0.5.
+ * Strictness 0 hides at P >= 0.85, the default 0.5 at P >= 0.55, and 1 at P >= 0.25.
+ *
+ * On real posts, d1 gives off-topic posts about 0 to 0.1 and on-topic posts
+ * 0.25 to 0.98. Provisional: tune on the labeled evaluation set (milestone M3).
  */
 export function thresholdFor(strictness: number): number {
-  return 0.9 - 0.4 * Math.min(1, Math.max(0, strictness));
+  return 0.85 - 0.6 * Math.min(1, Math.max(0, strictness));
 }
 
 /** Check the rules that do not need the model. Returns a verdict, or null if no rule applies. */

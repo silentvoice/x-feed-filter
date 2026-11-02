@@ -29,7 +29,7 @@ flowchart TB
 |---|---|
 | Content script | Finds posts on x.com. Reads the text. Blurs or hides posts. |
 | Background service worker | Applies rules and the cache. Sends the other posts to the model. Converts scores to verdicts. |
-| Offscreen document | Runs the model. Manifest V3 service workers cannot use WebGPU. Thus, the model runs in an offscreen document. |
+| Offscreen document | Runs the model with ONNX Runtime Web on WebGPU. Manifest V3 service workers cannot use WebGPU. Thus, the model runs in an offscreen document. |
 | Popup and settings page | Show and change the settings. |
 | `chrome.storage.sync` | Keeps the settings. Chrome syncs them between the user's computers. |
 
@@ -64,15 +64,23 @@ X removes posts from the page when they go out of view. X also uses the same `<a
 
 All models use the `ClassifierBackend` interface (`src/lib/classifier/backend.ts`). The background selects a backend from the settings. To add a model, add a class that implements the interface.
 
+### Model rows
+
+The d1 model answers one question about one text in each row. Thus, the backend makes one row for each (post, filter) pair. The rows go to the model in batches of up to 8192 tokens. Rows of similar length go together, to reduce padding.
+
+Each row is about 75 tokens: the post text, the filter question, and two answer options. A row is limited to 512 tokens. This limit truncates only very long posts.
+
 ### Threshold
 
 One strictness value (0 to 1) controls all filters:
 
 ```
-threshold = 0.9 − 0.4 × strictness
+threshold = 0.85 − 0.6 × strictness
 ```
 
-Strictness 0 filters a post only when the probability is 0.9 or more. Strictness 1 filters a post when the probability is 0.5 or more. Later releases can add a threshold for each filter.
+Strictness 0 filters a post only when the probability is 0.85 or more. The default strictness (0.5) filters a post when the probability is 0.55 or more. Strictness 1 filters a post when the probability is 0.25 or more.
+
+On real posts, d1 gives off-topic posts a probability of about 0 to 0.1. It gives on-topic posts 0.25 to 0.98. These values are provisional. The evaluation set of milestone M3 will tune them. Later releases can add a threshold for each filter.
 
 ### Cache
 
@@ -84,6 +92,7 @@ The cache key contains the post ID and a hash of the active filters and the stri
 |---|---|
 | `storage` | Keep the settings. |
 | `offscreen` | Run the model in an offscreen document with WebGPU. |
+| `wasm-unsafe-eval` (content security policy) | Compile the ONNX Runtime WebAssembly file, which is in the extension package. |
 | `x.com`, `twitter.com` hosts | Run the content script on X. |
 
 The extension does not request other permissions. Each new permission needs a reason in this table.

@@ -8,16 +8,15 @@ This document gives the milestones of the project and their status.
 | 🚧 | In progress |
 | ⬜ | Not started |
 
-## M0: Prove d1 in the browser 🚧
+## M0: Prove d1 in the browser ✅
 
-This milestone has the highest risk. Do it first.
-
-- ⬜ Load `d1-omni-600M-ONNX` (8-bit text graph) with `onnxruntime-web/webgpu` on a test page.
-- ⬜ Port the d1 prompt encoding and the answer decoding from Python to TypeScript.
-- ⬜ Compare the TypeScript output with the Python output on 20 examples. The difference must be less than 0.01.
-- ⬜ Measure the latency on Apple M1 to M4 for 8 posts and 5 filters.
-- ⬜ Compare the 8-bit and the 4-bit text graphs.
-- ⬜ Decide: d1-omni-600M is the default, or ModernBERT zero-shot is the default.
+- ✅ Load `d1-omni-600M-ONNX` with `onnxruntime-web/webgpu` on a benchmark page (`npm run bench`).
+- ✅ Port the d1 prompt encoding and the answer decoding from Python to TypeScript.
+- ✅ Compare the TypeScript output with the Python output. Token IDs are the same. The largest probability difference is 0.00001.
+- ✅ Measure the latency on Apple M5 Max: 49 ms for each post with 5 filters (4-bit, WebGPU).
+- ✅ Compare the 8-bit and the 4-bit text graphs. The 4-bit graph is 12 times faster.
+- ✅ Decide: d1-omni-600M (4-bit) is the default. See [model selection](model-selection.md#measurements-milestone-m0).
+- ⬜ Measure the latency on Apple M1 to M4.
 
 ## M1: Extension skeleton ✅
 
@@ -29,12 +28,14 @@ This milestone has the highest risk. Do it first.
 - ✅ Popup and settings page
 - ✅ Unit tests, CI, and documentation
 
-## M2: On-device model ⬜
+## M2: On-device model 🚧
 
-- ⬜ d1 backend in the offscreen document
+- ✅ d1 backend in the offscreen document
+- ✅ Weights in Cache Storage
+- ✅ Test the full extension on x.com (logged in, real timeline)
+- ✅ End-to-end tests in Chromium
 - ⬜ Model download with progress in the popup
-- ⬜ Weights in Cache Storage
-- ⬜ Batches of (post, filter) pairs
+- ✅ Batches of (post, filter) pairs
 - ⬜ Posts near the viewport first (`IntersectionObserver`)
 - ⬜ Automatic backend selection: d1 with WebGPU, else the zero-shot fallback
 

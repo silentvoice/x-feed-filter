@@ -57,7 +57,10 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     posts: pending,
     filters,
   };
-  const { scores } = (await browser.runtime.sendMessage(request)) as OffscreenClassifyResponse;
+  const { scores, error } = (await browser.runtime.sendMessage(
+    request,
+  )) as OffscreenClassifyResponse;
+  if (error) console.warn('[x-feed-filter] model error:', error);
   pending.forEach((post, i) => {
     const verdict = verdictFromScores(post.id, scores[i] ?? {}, filters, settings.strictness);
     cache.set(post.id, key, verdict);
@@ -67,8 +70,8 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
 }
 
 function resolveBackend(settings: Settings): BackendId {
-  // TODO(M0): resolve "auto" to d1, or to zero-shot when WebGPU is not available.
-  return settings.backend === 'auto' ? 'rules-only' : settings.backend;
+  // TODO(M2): resolve "auto" to zero-shot when WebGPU is not available.
+  return settings.backend === 'auto' ? 'd1' : settings.backend;
 }
 
 function visible(post: Post): Verdict {

@@ -15,16 +15,18 @@ export function extractPost(article: Element): Post | null {
   if (!match) return null;
   const [, author = '', id = ''] = match;
 
-  // A quoted post is a nested block with its own text element. The first text
-  // element belongs to the outer post.
-  const texts = article.querySelectorAll(SELECTORS.text);
+  // A quoted post is a nested box with its own text element. Use the box, not
+  // the order: a quote post can have no text of its own.
+  const texts = [...article.querySelectorAll(SELECTORS.text)];
+  const own = texts.find((el) => !el.closest(SELECTORS.quote));
+  const quoted = texts.find((el) => el.closest(SELECTORS.quote));
   const images = [...article.querySelectorAll<HTMLImageElement>(SELECTORS.image)];
 
   return {
     id,
     author,
-    text: texts[0]?.textContent?.trim() ?? '',
-    quotedText: texts[1]?.textContent?.trim() || undefined,
+    text: own?.textContent?.trim() ?? '',
+    quotedText: quoted?.textContent?.trim() || undefined,
     imageAlts: images.map((img) => img.alt).filter((alt) => alt && alt !== 'Image'),
     imageUrls: images.map((img) => img.src),
     isPromoted: isPromoted(article),

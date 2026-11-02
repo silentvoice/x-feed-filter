@@ -11,6 +11,10 @@ export default defineConfig({
       'Filter posts on X with plain-language rules. A small AI model runs on your device. No servers, no API keys.',
     permissions: ['storage', 'offscreen'],
     host_permissions: ['*://x.com/*', '*://twitter.com/*'],
+    content_security_policy: {
+      // ONNX Runtime Web compiles WebAssembly. The `.wasm` file ships with the extension.
+      extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],

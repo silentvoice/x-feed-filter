@@ -17,7 +17,7 @@ A small AI model runs on your computer. Your posts do not go to a server.
 </div>
 
 > [!NOTE]
-> This project is in early development. The rules, the settings, and the interface work now. The on-device model is in progress. See the [roadmap](docs/roadmap.md).
+> This project is in early development. The on-device model works in the browser at about 50 ms for each post. The full extension is not yet tested on x.com. See the [roadmap](docs/roadmap.md).
 
 ## Features
 
@@ -26,7 +26,7 @@ A small AI model runs on your computer. Your posts do not go to a server.
 - **Blur or hide.** By default, a filtered post is blurred. The blur shows the reason and a **Show** button. You can also remove filtered posts fully.
 - **No flash of filtered content.** New posts stay blurred until the extension checks them.
 - **Strictness control.** One slider sets how sure the model must be before it filters a post.
-- **Private by design.** The model runs on your device with WebGPU. The extension does not collect data. It has no server and needs no account.
+- **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). The extension does not collect data. It has no server and needs no account.
 - **Muted words and an allowlist.** Hide posts that contain specific words. Never filter the accounts that you trust.
 
 ## Install
