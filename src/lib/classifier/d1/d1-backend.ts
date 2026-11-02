@@ -219,6 +219,7 @@ export function postState(post: Post): string {
   const parts = [`Post by @${post.author}:`, post.text];
   if (post.quotedText) parts.push(`Quoted post: ${post.quotedText}`);
   if (post.imageAlts.length > 0) parts.push(`Images: ${post.imageAlts.join(' | ')}`);
+  if (post.imageText) parts.push(`Text in images: ${post.imageText}`);
   return parts.join('\n');
 }
 

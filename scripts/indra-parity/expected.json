@@ -1,0 +1,71 @@
+{
+  "dark-banner": {
+    "boxes": [[39.77, 44.61, 750.85, 81.55], [36.43, 87.74, 432.32, 126.1]],
+    "lines": [
+      {
+        "text": "BREAKING: The economy is collapsing and",
+        "conf": 0.9882
+      },
+      {
+        "text": "nothing can stop it now.",
+        "conf": 0.9981
+      }
+    ]
+  },
+  "light-text": {
+    "boxes": [[39.57, 43.84, 593.95, 72.23], [37.23, 84.8, 632.14, 111.06]],
+    "lines": [
+      {
+        "text": "RT if you agree! Like, repost, and tag a",
+        "conf": 0.9784
+      },
+      {
+        "text": "friend. Follow me for more tips every day.",
+        "conf": 0.9844
+      }
+    ]
+  },
+  "meme": {
+    "boxes": [[80.44, 30.79, 559.56, 86.16], [115.02, 466.96, 523.73, 525.16]],
+    "lines": [
+      {
+        "text": "WHEN YOU FIX ONE BUG",
+        "conf": 0.9526
+      },
+      {
+        "text": "AND FIND TEN MORE",
+        "conf": 0.9793
+      }
+    ]
+  },
+  "no-text": {
+    "boxes": [],
+    "lines": []
+  },
+  "small-text": {
+    "boxes": [
+      [17.88, 23.99, 189.54, 37.58],
+      [18.96, 58.95, 555.26, 73.19],
+      [19.05, 80.22, 367.67, 93.87],
+      [20.15, 114.8, 245.87, 128.93]
+    ],
+    "lines": [
+      {
+        "text": "Jane Doe @janedoe · 2h",
+        "conf": 0.9646
+      },
+      {
+        "text": "Honestly the new update is great. The team fixed the sync bug and the app feels",
+        "conf": 0.9868
+      },
+      {
+        "text": "fast again. Thanks to everyone who reported issues.",
+        "conf": 0.9839
+      },
+      {
+        "text": "12 replies · 40 reposts · 1.2K likes",
+        "conf": 0.9721
+      }
+    ]
+  }
+}

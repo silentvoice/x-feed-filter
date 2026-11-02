@@ -31,6 +31,8 @@ export interface OffscreenClassifyRequest {
   backend: BackendChoice;
   posts: Post[];
   filters: FilterQuestion[];
+  /** Read the text in post images before the model checks the posts. */
+  readImageText: boolean;
 }
 
 /** Background → offscreen document: load the model, classify nothing. */

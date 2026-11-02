@@ -12,6 +12,15 @@ model weights from Hugging Face. These weights have their own licenses:
   Copyright Liquid AI, Inc. https://huggingface.co/LiquidAI
 - ModernBERT zero-shot models: Apache License 2.0.
   https://huggingface.co/MoritzLaurer
+- Indra OCR models (det.onnx, rec.onnx, meta.json, revision v1.1.0), by
+  Datalab: modified OpenRAIL-M license. https://huggingface.co/datalab-to/indra-ocr
+  License: https://huggingface.co/datalab-to/indra-ocr/blob/v1.1.0/LICENSE
+  The use restrictions in Attachment A of that license apply to all users of
+  these models. In summary: use them only for lawful purposes, and, if your
+  organization has more than USD 20 million in annual revenue or funding, or
+  competes with Datalab, use them only for personal use or research.
+  src/lib/classifier/indra/ is a TypeScript port of parts of the Indra OCR
+  Python package (Apache License 2.0, https://github.com/datalab-to/indra).
 
 X is a trademark of X Corp. This product is not affiliated with,
 endorsed by, or sponsored by X Corp.

@@ -8,6 +8,9 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- Text in images: the extension reads the text in post images (for example, screenshots) on the device with Indra OCR by Datalab (about 6 MB, CPU), and adds it to the model input. The **Check images** setting turns it on or off.
+- Parity test for the Indra OCR port against the Python package (`scripts/indra-parity/`).
+
 - New name and icon: Lull.
 - GitHub Pages website (`site/`).
 - Model status and download progress in the popup. The popup starts the model when it opens.

@@ -13,12 +13,16 @@ This document gives the data that the extension uses, where the data goes, and w
 | Data | Purpose | Where it goes |
 |---|---|---|
 | Text, author handle, and image descriptions of posts on x.com | Check the post against your filters | Stays in your browser. The on-device model reads it. |
+| Images of posts on x.com (when **Check images** is on) | Read the text in the images | Stays in your browser. The on-device text recognition reads it. The extension keeps the text of the last 500 images in memory only. |
 | Your settings and filters | Apply your filters | `chrome.storage.sync`. Chrome syncs it to your other computers if Chrome sync is on. |
 | Daily counts and the last 30 filtered posts (author handle, first 100 characters, reasons) | Show the activity in the popup | `chrome.storage.local`. It stays on this computer. Chrome does not sync it. |
 
 ## Network requests
 
-The extension makes one type of network request: it downloads the model weights from Hugging Face (`huggingface.co`) on first use. With WebGPU, it downloads the d1 model (about 245 MB). Without WebGPU, it downloads the zero-shot model (about 150 MB). The request does not contain your data. The extension keeps the weights in the browser Cache Storage.
+The extension makes two types of network request:
+
+1. **Model weights.** On first use, it downloads the model weights from Hugging Face (`huggingface.co`). With WebGPU, it downloads the d1 model (about 245 MB). Without WebGPU, it downloads the zero-shot model (about 150 MB). When **Check images** is on, it also downloads the text recognition model (about 6 MB). The requests do not contain your data. The extension keeps the weights in the browser Cache Storage.
+2. **Post images.** When **Check images** is on, the extension downloads the images of posts from the X image server (`pbs.twimg.com`) to read their text. These are the same images that x.com shows to you. The requests go only to X.
 
 ## Data that the extension stores
 

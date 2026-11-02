@@ -30,6 +30,7 @@ Your posts do not go to a server.
 - **No flash of filtered content.** New posts stay blurred until the extension checks them.
 - **Strictness control.** One slider sets how sure the model must be before it filters a post.
 - **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). Computers without WebGPU use a smaller model on the CPU. The extension does not collect data. It has no server and needs no account.
+- **Text in images.** The extension also reads the text in screenshots and other images, on your device.
 - **Muted words and an allowlist.** Hide posts that contain specific words. Never filter the accounts that you trust.
 
 ## Install
