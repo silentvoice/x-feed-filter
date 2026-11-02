@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home (Lull demo)</title>
+    <!--
+      Demo page for the Chrome Web Store screenshots (scripts/store-assets.mjs).
+      It copies the parts of the X timeline markup that the extension reads.
+      All posts and accounts are fictional.
+    -->
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #fff; color: #0f1419; font: 15px/1.35 -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+      .layout { display: grid; grid-template-columns: 1fr 600px 1fr; min-height: 100vh; }
+      nav { display: flex; flex-direction: column; align-items: flex-end; gap: 22px; padding: 18px 28px; font-size: 19px; }
+      nav span { width: 180px; color: #0f1419; }
+      nav .logo { font-size: 28px; font-weight: 800; }
+      main { border-left: 1px solid #eff3f4; border-right: 1px solid #eff3f4; }
+      .tabs { display: flex; border-bottom: 1px solid #eff3f4; font-weight: 700; }
+      .tabs div { flex: 1; text-align: center; padding: 16px 0; color: #536471; }
+      .tabs div:first-child { color: #0f1419; box-shadow: inset 0 -4px 0 #1d9bf0; }
+      article { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #eff3f4; }
+      .avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; }
+      .content { flex: 1; min-width: 0; }
+      [data-testid="User-Name"] { display: flex; gap: 4px; }
+      [data-testid="User-Name"] b { font-weight: 700; }
+      [data-testid="User-Name"] span, time { color: #536471; }
+      a { color: inherit; text-decoration: none; }
+      [data-testid="tweetPhoto"] img { margin-top: 10px; width: 100%; border: 1px solid #cfd9de; border-radius: 16px; display: block; }
+      .actions { display: flex; justify-content: space-between; max-width: 420px; margin-top: 10px; color: #536471; font-size: 13px; }
+      aside { padding: 12px 24px; }
+      .box { width: 320px; border: 1px solid #eff3f4; border-radius: 16px; padding: 12px 16px; }
+      .box h2 { font-size: 20px; margin: 0 0 8px; }
+      .box p { margin: 10px 0; color: #536471; font-size: 13px; }
+      .box p b { display: block; color: #0f1419; font-size: 15px; }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <nav>
+        <span class="logo">Home</span><span>Explore</span><span>Notifications</span><span>Messages</span><span>Profile</span>
+      </nav>
+      <main>
+        <div class="tabs"><div>For you</div><div>Following</div></div>
+        <div id="timeline"></div>
+      </main>
+      <aside>
+        <div class="box">
+          <h2>What’s happening</h2>
+          <p>Technology · Trending<b>WebGPU</b>12.4K posts</p>
+          <p>Gardening · Trending<b>#FirstHarvest</b>3,021 posts</p>
+          <p>Science · Trending<b>Comet season</b>8,940 posts</p>
+        </div>
+      </aside>
+    </div>
+    <script>
+      // [name, handle, id, time, color, text, image]
+      const POSTS = [
+        ['Maya Chen', 'maya_bakes', '9001', '2h', '#d9a066', 'First sourdough that actually rose. Ten tries. Worth it.'],
+        ['Hot Takes Daily', 'hottakes', '9002', '1h', '#c45c5c', 'If you still use tabs you are a clown and should be fired. Absolutely pathetic.'],
+        ['Sam Ortiz', 'samcodes', '9003', '1h', '#5c7cc4', 'Shipped dark mode today. Took longer than planned, but I am really happy with it.'],
+        ['Growth Guru', 'growthguru', '9004', '50m', '#8a5cc4', 'lol so true', 'IMAGE_TEXT'],
+        ['Moon Signals', 'moonsignals', '9005', '45m', '#c4a35c', '$PEPE2 airdrop is LIVE. Connect your wallet now, first 1000 get 10x. Do not miss this.'],
+        ['Trail Notes', 'trailnotes', '9006', '20m', '#5c9c7c', 'Fog lifted at the summit right at sunrise. Best hike of the year.'],
+      ];
+
+      const timeline = document.getElementById('timeline');
+      for (const [name, handle, id, time, color, text, image] of POSTS) {
+        const cell = document.createElement('div');
+        cell.dataset.testid = 'cellInnerDiv';
+        cell.innerHTML = `
+          <article data-testid="tweet" tabindex="0">
+            <div class="avatar" style="background:${color}"></div>
+            <div class="content">
+              <div data-testid="User-Name"><b>${name}</b> <span>@${handle}</span> <span>·</span>
+                <a href="/${handle}/status/${id}"><time datetime="2026-11-02T12:00:00Z">${time}</time></a></div>
+              <div data-testid="tweetText" lang="en"><span>${text}</span></div>
+              ${image ? `<div data-testid="tweetPhoto"><img alt="Image" src="${image}"></div>` : ''}
+              <div class="actions"><span>💬 12</span><span>🔁 4</span><span>♡ 88</span><span>📊 1.2K</span></div>
+            </div>
+          </article>`;
+        timeline.append(cell);
+      }
+    </script>
+  </body>
+</html>

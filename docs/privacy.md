@@ -16,6 +16,7 @@ This document gives the data that the extension uses, where the data goes, and w
 | Images of posts on x.com (when **Check images** is on) | Read the text in the images | Stays in your browser. The on-device text recognition reads it. The extension keeps the text of the last 500 images in memory only. |
 | Your settings and filters | Apply your filters | `chrome.storage.sync`. Chrome syncs it to your other computers if Chrome sync is on. |
 | Daily counts and the last 30 filtered posts (author handle, first 100 characters, reasons) | Show the activity in the popup | `chrome.storage.local`. It stays on this computer. Chrome does not sync it. |
+| Checked posts (author handle, text, image text), only when you turn on **Save checked posts for evaluation** (off by default) | Label them and measure the filters | `chrome.storage.local`, up to 1,000 posts. It stays on this computer. The extension sends them nowhere. You can export them to a file yourself. |
 
 ## Network requests
 
@@ -30,6 +31,7 @@ The extension makes two types of network request:
 |---|---|---|
 | Settings and filters | `chrome.storage.sync` | Remove the extension. |
 | Daily counts and recently filtered posts | `chrome.storage.local` | Remove the extension. |
+| Posts saved for evaluation | `chrome.storage.local` | Click **Delete all** on the label page, or remove the extension. |
 | Model status | `chrome.storage.session` | Close Chrome. |
 | Model weights | Cache Storage of the extension | Remove the extension. |
 | Verdicts | Memory only | Close Chrome. |

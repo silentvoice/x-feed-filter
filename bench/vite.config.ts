@@ -37,6 +37,10 @@ export default defineConfig({
     staticDir('/ort', resolve(import.meta.dirname, '../node_modules/onnxruntime-web/dist')),
   ],
   optimizeDeps: { exclude: ['onnxruntime-web'] },
+  // scripts/eval.mjs --posts: evaluate another posts file (for example, your own labeled posts).
+  resolve: process.env.EVAL_POSTS
+    ? { alias: [{ find: /^\.\.\/eval\/posts\.json$/, replacement: process.env.EVAL_POSTS }] }
+    : {},
   server: {
     port: 5199,
     fs: { allow: [resolve(import.meta.dirname, '..')] },

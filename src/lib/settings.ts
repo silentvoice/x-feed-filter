@@ -25,6 +25,8 @@ export const SettingsSchema = z.object({
   hidePromoted: z.boolean(),
   analyzeImages: z.boolean(),
   backend: z.enum(['auto', 'd1', 'zero-shot', 'rules-only']),
+  /** Keep the posts that the model checks in local storage, to label them for an evaluation. */
+  saveForEvaluation: z.boolean(),
   /** Threshold change for each filter from "Not a match" feedback. */
   filterAdjust: z.record(z.string(), z.number()),
 });
@@ -44,6 +46,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hidePromoted: false,
   analyzeImages: true,
   backend: 'auto',
+  saveForEvaluation: false,
   filterAdjust: {},
 };
 

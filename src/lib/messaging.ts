@@ -48,6 +48,8 @@ export interface OffscreenClassifyResponse {
   backend?: BackendId;
   /** Set when the model failed. The posts stay visible. */
   error?: string;
+  /** The text found in the images of each post, in the order of the request. */
+  imageTexts?: (string | undefined)[];
 }
 
 /** Offscreen document → background. */

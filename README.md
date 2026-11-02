@@ -108,6 +108,7 @@ For more information, read the [architecture document](docs/architecture.md) and
 | [Writing good filters](docs/writing-filters.md) | How to write filter descriptions that work well |
 | [Development](docs/development.md) | Set up, build, test, and debug the extension |
 | [Roadmap](docs/roadmap.md) | Milestones and status |
+| [Store listing](docs/store-listing.md) | Chrome Web Store text, permissions, and privacy answers |
 | [Privacy](docs/privacy.md) | The data that the extension uses and stores |
 | [Documentation style guide](docs/style-guide.md) | The ASD-STE100 rules for all documents in this repository |
 

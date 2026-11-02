@@ -38,3 +38,4 @@ e2e/.*.mjs
 
 # Evaluation output (regenerate with npm run eval)
 eval/results/
+eval/local/

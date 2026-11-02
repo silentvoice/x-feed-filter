@@ -131,6 +131,25 @@ With d1, the wrapper improves the F1 score of `layoffs` from 76% to 87%, and of 
 - Each filter has approximately 20 matching posts. Thus, one post changes recall by approximately 5 points.
 - We selected the wording and the calibration with this set. The results on the same set are thus optimistic.
 
+## Evaluate with your own posts
+
+The evaluation set is synthetic. To measure the filters on the posts in your own feed, do the procedure that follows. Your posts stay on your computer. Do not add them to the repository: Git ignores the `eval/local/` folder.
+
+1. Open the Lull settings. In **Evaluation (advanced)**, turn on **Save checked posts for evaluation**.
+2. Scroll your feed on x.com. Lull keeps up to 1,000 posts that the model checks, in local storage.
+3. In the settings, click **Label saved posts**.
+4. For each post, select the filters that it really matches. Then click **Save labels**. Label 100 posts or more. Make sure that each filter has some matching posts.
+5. Click **Export labeled posts**. Move the file to `eval/local/` in the repository.
+6. Run the evaluation with the file:
+
+   ```bash
+   npm run eval -- d1 --posts eval/local/lull-labeled-posts-2026-11-02.json --shipped
+   ```
+
+7. Turn off **Save checked posts for evaluation**. On the label page, click **Delete all** to remove the saved posts.
+
+The script measures only the filters that have one or more matching posts in the file. It writes the results to `eval/results/<model>-<file>.json`.
+
 ## Change a built-in filter
 
 1. Add the new wording to `eval/variants.json`.

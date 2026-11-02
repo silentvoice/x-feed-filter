@@ -1,4 +1,5 @@
 import { recordActivity } from '@/lib/activity';
+import { saveEvalPosts } from '@/lib/eval-posts';
 import { activeFilters, applyRules, verdictFromScores, withFeedback } from '@/lib/filters/evaluate';
 import {
   type ClassifyResponse,
@@ -10,13 +11,17 @@ import {
   type OffscreenClassifyResponse,
   type OffscreenWarmupRequest,
 } from '@/lib/messaging';
-import { modelStatusItem } from '@/lib/model-status';
+import { installedModelsItem, modelStatusItem } from '@/lib/model-status';
+import type { Settings } from '@/lib/settings';
 import { getSettings, saveSettings } from '@/lib/storage';
 import type { Post, Verdict } from '@/lib/types';
 import { filterKey, VerdictCache } from '@/lib/verdict-cache';
 
 const OFFSCREEN_PATH = '/offscreen.html';
 const cache = new VerdictCache();
+/** While the model is not available, start it again at most this often. */
+const AUTO_WARMUP_INTERVAL_MS = 30_000;
+let lastAutoWarmup = 0;
 
 // Storage updates read a value and write it back. Run them one at a time, so
 // two batches (or two clicks) at the same time do not overwrite each other.
@@ -28,9 +33,23 @@ function serialized<T>(task: () => Promise<T>): Promise<T> {
 }
 
 export default defineBackground(() => {
+  // The first-run page explains the model download and starts it.
+  browser.runtime.onInstalled.addListener(({ reason }) => {
+    if (reason === 'install')
+      void browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
+  });
+
   browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (isModelStatusMessage(message)) {
       void modelStatusItem.setValue(message.status);
+      const { backend, state } = message.status;
+      if (state === 'ready' && backend) {
+        void serialized(async () => {
+          const installed = await installedModelsItem.getValue();
+          if (!installed[backend])
+            await installedModelsItem.setValue({ ...installed, [backend]: true });
+        });
+      }
       return;
     }
     if (isFeedbackRequest(message)) {
@@ -93,6 +112,17 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     return [...verdicts, ...shown];
   }
 
+  if (!(await modelAvailable(settings))) {
+    // The model must download first. Do not keep posts blurred for minutes:
+    // show them, start the download, and do not cache these verdicts.
+    if (Date.now() - lastAutoWarmup > AUTO_WARMUP_INTERVAL_MS) {
+      lastAutoWarmup = Date.now();
+      warmup().catch((error: unknown) => console.warn('[lull] warm-up failed', error));
+    }
+    await serialized(() => recordActivity(posts, fresh));
+    return [...verdicts, ...pending.map(visible)];
+  }
+
   await ensureOffscreenDocument();
   const request: OffscreenClassifyRequest = {
     target: 'offscreen',
@@ -122,6 +152,10 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     fresh.push(verdict);
   });
   await serialized(() => recordActivity(posts, fresh));
+  if (settings.saveForEvaluation) {
+    const checked = pending.map((post, i) => ({ ...post, imageText: response.imageTexts?.[i] }));
+    await serialized(() => saveEvalPosts(checked));
+  }
   return verdicts;
 }
 
@@ -149,6 +183,22 @@ async function warmup(): Promise<void> {
     backend: settings.backend,
   };
   await browser.runtime.sendMessage(request);
+}
+
+/**
+ * True if the model is ready, or if it can start without a download. While a
+ * model downloads, posts must not wait for it.
+ */
+async function modelAvailable(settings: Settings): Promise<boolean> {
+  const [status, installed] = await Promise.all([
+    modelStatusItem.getValue(),
+    installedModelsItem.getValue(),
+  ]);
+  if (status.state === 'ready') return true;
+  if (status.state === 'error') return false;
+  return settings.backend === 'auto'
+    ? Boolean(installed.d1 || installed['zero-shot'])
+    : Boolean(installed[settings.backend]);
 }
 
 function visible(post: Post): Verdict {

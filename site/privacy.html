@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy policy · Lull</title>
+  <meta name="description" content="Lull privacy policy. Posts do not leave your computer.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <style>
+    :root { --bg: #f7f5f0; --fg: #1f2a24; --muted: #5b6660; --line: #e4e0d6; --accent: #3f5f50; color-scheme: light; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #0f1512; --fg: #e4e9e5; --muted: #9aa8a0; --line: #25302a; --accent: #8fb3a0; color-scheme: dark; }
+    }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 -apple-system, "Segoe UI", system-ui, sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
+    a { color: var(--accent); }
+    h1 { font-size: 34px; line-height: 1.2; margin: 16px 0 4px; }
+    h2 { font-size: 21px; margin-top: 36px; }
+    .muted { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; vertical-align: top; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); }
+    header a { display: inline-flex; align-items: center; gap: 10px; color: var(--fg); text-decoration: none; font-weight: 700; }
+    header img { width: 32px; height: 32px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header><a href="./"><img src="icon.svg" alt="">Lull</a></header>
+    <h1>Privacy policy</h1>
+    <p class="muted">Last update: 2 November 2026</p>
+
+    <h2>Summary</h2>
+    <ul>
+      <li>Lull does not send the content of posts to a server. The AI model runs on your computer.</li>
+      <li>Lull does not collect analytics or telemetry.</li>
+      <li>Lull has no server and does not need an account.</li>
+    </ul>
+
+    <h2>Data that Lull reads</h2>
+    <table>
+      <tr><th>Data</th><th>Purpose</th><th>Where it goes</th></tr>
+      <tr><td>Text, author handle, and image descriptions of posts on x.com</td><td>Check each post against your filters</td><td>Stays in your browser. The on-device model reads it.</td></tr>
+      <tr><td>Images of posts on x.com (when "Check images" is on)</td><td>Read the text in the images</td><td>Stays in your browser. The text of the last 500 images stays in memory only.</td></tr>
+      <tr><td>Your settings and filters</td><td>Apply your filters</td><td>Chrome sync storage. Chrome syncs it to your other computers if Chrome sync is on.</td></tr>
+      <tr><td>Daily counts and the last 30 filtered posts (author handle, first 100 characters, reasons)</td><td>Show the activity in the popup</td><td>Local storage on this computer. Chrome does not sync it.</td></tr>
+    </table>
+
+    <h2>Network requests</h2>
+    <ul>
+      <li><strong>Model weights.</strong> On first use, Lull downloads the AI models from Hugging Face (huggingface.co). The requests do not contain your data. The models stay in the browser cache.</li>
+      <li><strong>Post images.</strong> When "Check images" is on, Lull downloads the images of posts from the X image server (pbs.twimg.com) to read their text. These are the same images that x.com shows to you.</li>
+    </ul>
+    <p>Lull makes no other network requests.</p>
+
+    <h2>Sharing</h2>
+    <p>Lull does not sell, transfer, or share your data. It does not use your data for advertising or for credit decisions.</p>
+
+    <h2>Delete your data</h2>
+    <p>Remove the extension from Chrome. This deletes the settings, the counts, the list of filtered posts, and the models.</p>
+
+    <h2>Contact</h2>
+    <p>Open an issue on <a href="https://github.com/silentvoice/x-feed-filter/issues">GitHub</a>. The source code is public, so you can check this policy against the code.</p>
+
+    <p class="muted">Lull is not affiliated with, endorsed by, or sponsored by X Corp.</p>
+  </main>
+</body>
+</html>

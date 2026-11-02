@@ -247,4 +247,14 @@ X changes its HTML often. If the extension stops finding posts, do these steps:
 3. Make a commit with the message `chore: release vX.Y.Z`.
 4. Make a tag `vX.Y.Z` and push it.
 5. The release workflow builds the `.zip` file and attaches it to a GitHub release.
-6. Upload the `.zip` file in the Chrome Web Store developer dashboard.
+6. Upload the `.zip` file in the Chrome Web Store developer dashboard. Use the text and the answers in [Store listing](store-listing.md).
+
+### Store images
+
+The store screenshots and the promotional tiles are in `store/`. To make them again after a change to the user interface:
+
+```bash
+npm run build && npm run store:assets
+```
+
+The script loads the built extension on `store/demo-feed.html` (fictional posts) with the real model. Set `XFF_PROFILE_DIR` to keep the model download between runs.

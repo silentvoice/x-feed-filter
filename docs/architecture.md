@@ -80,6 +80,12 @@ The "Automatic" setting selects the model in the offscreen document:
 
 The offscreen document sends the model status (loading, download progress, ready, or error) to the background. The background keeps it in `chrome.storage.session`. The popup shows it. When the popup opens, it asks the background to start the model.
 
+### First run
+
+When the user installs the extension, the background opens the welcome page (`welcome.html`). The page gives the download size for this computer and starts the download.
+
+A model that loaded one time is "installed" (`local:installedModels`): its weights are in Cache Storage, and it starts in seconds. Until a model is installed, the background does not send posts to it. The posts are visible at once, and the background starts the download (at most one time in 30 seconds). These verdicts do not go into the cache, so the posts are checked again later. After the model is installed, new posts stay blurred until the model checks them.
+
 ### Text in images
 
 Many posts on X are screenshots of text. The offscreen document reads the text of up to two images for each post with Indra OCR on the CPU (`ImageTextReader`, `src/lib/classifier/image-text.ts`):

@@ -8,6 +8,13 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ### Added
 
+- Welcome page on install: what Lull does, the download size for this computer, a **Download and start** button, privacy, and model licenses.
+- While the model downloads, posts are visible. They do not wait for the model.
+- "Try again" when the model does not start. Automatic retries at most every 30 seconds.
+- Evaluate with your own posts: **Save checked posts for evaluation** (off by default), a label page, and `npm run eval -- --posts <file>`.
+- Chrome Web Store materials: listing text, permission justifications, screenshots and promotional tiles (`npm run store:assets`), and a privacy policy page on the website.
+- The settings page shows the model status, and has an About section.
+
 - Text in images: the extension reads the text in post images (for example, screenshots) on the device with Indra OCR by Datalab (about 6 MB, CPU), and adds it to the model input. The **Check images** setting turns it on or off.
 - Parity test for the Indra OCR port against the Python package (`scripts/indra-parity/`).
 
@@ -33,6 +40,8 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - End-to-end tests in Chromium with Playwright (`npm run e2e`).
 
 ### Fixed
+
+- Extension pages used the 12 px default font of Chrome. All pages now use a 14 px base size.
 
 - A model download that stops on a bad connection now continues from the last byte (up to four attempts).
 - The d1 model no longer stops during load on a cross-origin isolated page. d1 now always uses one WebAssembly thread.

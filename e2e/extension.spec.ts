@@ -60,14 +60,39 @@ function article(page: Page, id: string) {
   return page.locator(`article[data-xff-id="${id}"]`);
 }
 
+test('first run: the welcome page starts the download, and posts stay visible until then', async () => {
+  // A kept profile (XFF_PROFILE_DIR) has the model already. This test needs a new profile.
+  test.skip(!!process.env.XFF_PROFILE_DIR, 'Needs a new profile');
+  const welcome =
+    context.pages().find((p) => p.url().endsWith('/welcome.html')) ??
+    (await context.waitForEvent('page', (p) => p.url().endsWith('/welcome.html')));
+  await expect(welcome.getByRole('heading', { name: 'Welcome to Lull' })).toBeVisible();
+  await expect(welcome.getByText(/The download is about \d+ MB/)).toBeVisible();
+
+  // Before the download, posts are visible at once: they do not wait for the model.
+  const page = await context.newPage();
+  await page.goto('https://x.com/home');
+  await expect(page.locator('article[data-xff-id]')).toHaveCount(5);
+  await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 10_000 });
+  await expect(page.locator('article.xff-blurred')).toHaveCount(0);
+  await page.close();
+
+  // Visiting x.com can start the download already. Then the page shows the progress.
+  const start = welcome.getByRole('button', { name: 'Download and start' });
+  if (await start.isVisible()) await start.click();
+  await expect(welcome.getByText('Liquid d1-omni-600M is ready')).toBeVisible({ timeout: 240_000 });
+  await expect(welcome.getByRole('link', { name: 'Open x.com' })).toBeVisible();
+  await welcome.close();
+});
+
 test('filters matching posts with the on-device model', async () => {
   const page = await context.newPage();
   page.on('console', (msg) => {
-    if (msg.text().includes('[x-feed-filter]')) extensionLog.push(`[x.com] ${msg.text()}`);
+    if (msg.text().includes('[lull]')) extensionLog.push(`[x.com] ${msg.text()}`);
   });
   await page.goto('https://x.com/home');
 
-  // All five posts get a verdict. The first run includes the model download.
+  // All five posts get a verdict. With a kept profile, the model starts from the cache.
   await expect(page.locator('article[data-xff-id]')).toHaveCount(5);
   await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 240_000 });
 
@@ -148,4 +173,49 @@ test('hides filtered posts when the action is "Hide"', async () => {
   await expect(article(page, '1003')).toHaveClass(/xff-hidden/, { timeout: 60_000 });
   await expect(article(page, '1003')).toBeHidden();
   await expect(article(page, '1002')).toBeVisible();
+});
+
+test('saves checked posts for an evaluation, then labels and exports them', async () => {
+  const options = await context.newPage();
+  await options.goto(`chrome-extension://${extensionId}/options.html`);
+  await options.getByText('Save checked posts for evaluation').click();
+
+  const page = await context.newPage();
+  await page.goto('https://x.com/home');
+  await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 30_000 });
+  // A new post goes to the model, so the extension saves it.
+  await page.evaluate(() =>
+    (window as unknown as { recycleFirstPost: (...a: string[]) => void }).recycleFirstPost(
+      'citydesk',
+      '4001',
+      'The city council voted 7 to 2 to approve the new transit budget on Tuesday.',
+    ),
+  );
+  await expect(article(page, '4001')).toHaveAttribute('data-xff-id', '4001', { timeout: 30_000 });
+  await expect(article(page, '4001')).not.toHaveClass(/xff-pending/, { timeout: 30_000 });
+  await page.close();
+
+  const label = await context.newPage();
+  await label.goto(`chrome-extension://${extensionId}/label.html`);
+  const card = label.locator('article', { hasText: 'transit budget' });
+  await card.getByLabel('Politics').check();
+  await card.getByRole('button', { name: 'Save labels' }).click();
+  await expect(label.getByText(/^1 of \d+ labeled$/)).toBeVisible();
+
+  const [download] = await Promise.all([
+    label.waitForEvent('download'),
+    label.getByRole('button', { name: 'Export labeled posts' }).click(),
+  ]);
+  const exported = JSON.parse(await readFile((await download.path()) as string, 'utf8'));
+  expect(exported).toEqual([
+    expect.objectContaining({
+      id: '4001',
+      text: 'The city council voted 7 to 2 to approve the new transit budget on Tuesday.',
+      labels: expect.objectContaining({ politics: 1, negativity: 0 }),
+    }),
+  ]);
+
+  await options.getByText('Save checked posts for evaluation').click();
+  await options.close();
+  await label.close();
 });
