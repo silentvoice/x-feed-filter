@@ -22,8 +22,11 @@ const RECENT_MAX = 30;
 export const statsItem = storage.defineItem<DailyStats | null>('local:stats', { fallback: null });
 export const recentItem = storage.defineItem<RecentItem[]>('local:recent', { fallback: [] });
 
+/** The local date as YYYY-MM-DD. "Today" starts at local midnight, not UTC midnight. */
 export function today(now = new Date()): string {
-  return now.toISOString().slice(0, 10);
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${now.getFullYear()}-${month}-${day}`;
 }
 
 /** Add one batch of new verdicts (not cached ones) to the stats and the recent list. */

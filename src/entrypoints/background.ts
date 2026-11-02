@@ -18,6 +18,15 @@ import { filterKey, VerdictCache } from '@/lib/verdict-cache';
 const OFFSCREEN_PATH = '/offscreen.html';
 const cache = new VerdictCache();
 
+// Storage updates read a value and write it back. Run them one at a time, so
+// two batches (or two clicks) at the same time do not overwrite each other.
+let storageChain: Promise<unknown> = Promise.resolve();
+function serialized<T>(task: () => Promise<T>): Promise<T> {
+  const result = storageChain.then(task);
+  storageChain = result.catch(() => {});
+  return result;
+}
+
 export default defineBackground(() => {
   browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (isModelStatusMessage(message)) {
@@ -50,7 +59,11 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
   const settings = await getSettings();
   const filters = activeFilters(settings);
   const key = filterKey(
-    [...filters.map((f) => `${f.id}:${f.question}`), JSON.stringify(settings.filterAdjust)],
+    [
+      ...filters.map((f) => `${f.id}:${f.question}`),
+      `backend:${settings.backend}`,
+      JSON.stringify(settings.filterAdjust),
+    ],
     settings.strictness,
   );
 
@@ -74,7 +87,8 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
   const backend = settings.backend;
   if (pending.length === 0 || filters.length === 0 || backend === 'rules-only') {
     const shown = pending.map(visible);
-    await recordActivity(posts, [...fresh, ...shown]);
+    for (const verdict of shown) cache.set(verdict.postId, key, verdict);
+    await serialized(() => recordActivity(posts, [...fresh, ...shown]));
     return [...verdicts, ...shown];
   }
 
@@ -105,15 +119,20 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     verdicts.push(verdict);
     fresh.push(verdict);
   });
-  await recordActivity(posts, fresh);
+  await serialized(() => recordActivity(posts, fresh));
   return verdicts;
 }
 
 /** "Not a match": raise the threshold of the filters that matched this post. */
 async function feedback(postId: string, filterIds: string[]): Promise<void> {
   if (filterIds.length === 0) return;
-  const settings = await getSettings();
-  await saveSettings({ ...settings, filterAdjust: withFeedback(settings.filterAdjust, filterIds) });
+  await serialized(async () => {
+    const settings = await getSettings();
+    await saveSettings({
+      ...settings,
+      filterAdjust: withFeedback(settings.filterAdjust, filterIds),
+    });
+  });
   console.info('[lull] feedback for post', postId, filterIds);
 }
 
