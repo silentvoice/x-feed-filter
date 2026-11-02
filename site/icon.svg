@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Lull</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6E8F7D"/>
+      <stop offset="1" stop-color="#4F6F5F"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
+  <!-- A choppy wave that settles into a calm line: noise in, calm out. -->
+  <path d="M20 64 C26 44, 32 44, 36 64 S46 84, 52 64 S60 52, 66 64 S74 70, 80 64 L108 64"
+        fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="108" cy="64" r="2" fill="#fff"/>
+</svg>

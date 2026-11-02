@@ -6,9 +6,10 @@ export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-react'],
   manifest: {
-    name: 'X Feed Filter',
+    name: 'Lull: a calmer feed for X',
+    short_name: 'Lull',
     description:
-      'Filter posts on X with plain-language rules. A small AI model runs on your device. No servers, no API keys.',
+      'Describe the posts you do not want to see on X. A small AI model on your device filters them out. No servers, no account.',
     permissions: ['storage', 'offscreen'],
     host_permissions: ['*://x.com/*', '*://twitter.com/*'],
     content_security_policy: {
