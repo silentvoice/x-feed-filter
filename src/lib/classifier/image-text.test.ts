@@ -92,6 +92,59 @@ describe('ImageTextReader', () => {
     expect(result?.imageText).toBeUndefined();
   });
 
+  it('does not make a batch wait for images in the queue, and caches them later', async () => {
+    let release = () => {};
+    const slow = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const read = vi.fn(async (image: Blob) => {
+      await slow;
+      return { text: `Text of ${await image.text()} for everyone`, confidence: 0.9 };
+    });
+    const reader = new ImageTextReader({
+      createRecognizer: async () => ({ read }),
+      fetchImage,
+      timeoutMs: 30,
+    });
+
+    const [first] = await reader.addImageText([post('1', ['a', 'b'])]);
+    expect(first?.imageText).toBeUndefined();
+
+    release();
+    await vi.waitFor(() => expect(read).toHaveBeenCalledTimes(2));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const [again] = await reader.addImageText([post('1', ['a', 'b'])]);
+    expect(again?.imageText).toBe('Text of a for everyone | Text of b for everyone');
+    expect(read).toHaveBeenCalledTimes(2);
+  });
+
+  it('reads one image once when two batches ask for it at the same time', async () => {
+    const recognizer = fakeRecognizer({ a: 'Follow me for more tips' });
+    const reader = new ImageTextReader({ createRecognizer: async () => recognizer, fetchImage });
+
+    await Promise.all([
+      reader.addImageText([post('1', ['a'])]),
+      reader.addImageText([post('2', ['a'])]),
+    ]);
+
+    expect(recognizer.read).toHaveBeenCalledTimes(1);
+  });
+
+  it('downloads the small size of X images', async () => {
+    const fetched: string[] = [];
+    const reader = new ImageTextReader({
+      createRecognizer: async () => fakeRecognizer({}),
+      fetchImage: async (url) => {
+        fetched.push(url);
+        return new Blob([url]);
+      },
+    });
+
+    await reader.addImageText([post('1', ['https://pbs.twimg.com/media/A?format=jpg&name=large'])]);
+
+    expect(fetched).toEqual(['https://pbs.twimg.com/media/A?format=jpg&name=small']);
+  });
+
   it('stops a slow image after the timeout', async () => {
     const reader = new ImageTextReader({
       createRecognizer: async () => ({ read: () => new Promise(() => {}) }),
