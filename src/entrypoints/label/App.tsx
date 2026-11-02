@@ -14,7 +14,8 @@ function exportPosts(posts: SavedPost[]): void {
   link.href = URL.createObjectURL(blob);
   link.download = `lull-labeled-posts-${new Date().toISOString().slice(0, 10)}.json`;
   link.click();
-  URL.revokeObjectURL(link.href);
+  // Revoke later: an immediate revoke can cancel the download.
+  setTimeout(() => URL.revokeObjectURL(link.href), 60_000);
 }
 
 function PostCard(props: {
