@@ -130,6 +130,23 @@ The parity test compares the TypeScript port with `scripts/d1-parity/expected-q8
 
 2. Make sure that all tests pass. The largest difference must be less than 0.01.
 
+### Run the Indra OCR parity test
+
+The Indra OCR parity test compares the TypeScript port (`src/lib/classifier/indra/`) with the Python package on the images in `scripts/indra-parity/`.
+
+1. Download `det.onnx`, `rec.onnx`, and `meta.json` from [datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr/tree/v1.1.0) (tag `v1.1.0`) to a folder, for example `models/indra`.
+2. Run the test:
+
+   ```bash
+   INDRA_OCR_MODEL_DIR=models/indra npm run parity
+   ```
+
+3. To make new reference values, install the Python package (`pip install indra-ocr`) and run:
+
+   ```bash
+   INDRA_OCR_MODEL_DIR=models/indra python -I scripts/indra-parity/reference.py
+   ```
+
 ### Make new reference values
 
 Do this procedure if you change `scripts/d1-parity/cases.json`.

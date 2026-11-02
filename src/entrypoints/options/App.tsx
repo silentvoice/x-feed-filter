@@ -33,7 +33,7 @@ export function App() {
         />
         <Toggle
           label="Check images"
-          description="Use image text and descriptions when the model checks a post."
+          description="Read the text in images (for example, screenshots) on your device, and use image descriptions. Uses Indra OCR by Datalab (about 6 MB, modified OpenRAIL-M license)."
           checked={settings.analyzeImages}
           onChange={(analyzeImages) => update({ analyzeImages })}
         />

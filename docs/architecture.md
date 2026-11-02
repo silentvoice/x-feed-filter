@@ -42,8 +42,9 @@ flowchart TB
 5. The background applies `applyRules()`: the allowlist, promoted posts, and muted words.
 6. The background looks for each remaining post in the verdict cache.
 7. The background sends the remaining posts and the active filters to the offscreen document.
-8. The model gives one probability for each (post, filter) pair.
-9. `verdictFromScores()` compares each probability with the threshold. The threshold comes from the strictness setting.
+8. If **Check images** is on, the offscreen document reads the text in the post images with Indra OCR (`src/lib/classifier/indra/`) and adds it to the post. See [Text in images](#text-in-images).
+9. The model gives one probability for each (post, filter) pair.
+10. `verdictFromScores()` compares each probability with the threshold. The threshold comes from the strictness setting.
 10. The content script removes the pending blur. Then it shows, blurs, or hides the post.
 
 ## Design decisions
@@ -78,6 +79,18 @@ The "Automatic" setting selects the model in the offscreen document:
 2. If WebGPU is not available, or if d1 does not load, it loads ModernBERT zero-shot (8-bit) on the CPU.
 
 The offscreen document sends the model status (loading, download progress, ready, or error) to the background. The background keeps it in `chrome.storage.session`. The popup shows it. When the popup opens, it asks the background to start the model.
+
+### Text in images
+
+Many posts on X are screenshots of text. The offscreen document reads the text of up to two images for each post with Indra OCR on the CPU (`ImageTextReader`, `src/lib/classifier/image-text.ts`):
+
+- It downloads each image from `pbs.twimg.com` and decodes it with `createImageBitmap()`.
+- It finds the text lines (`det.onnx`) and reads each line (`rec.onnx`).
+- It keeps text only if the mean confidence is 0.6 or more and the text has 3 or more words. Photos without text give no text.
+- It keeps the text of the last 500 images in memory. One image in different sizes uses one entry.
+- If an image takes more than 5 seconds or fails, the post goes to the model without image text.
+
+The model reads the text as `Text in images: …` after the post text.
 
 ### Posts near the viewport first
 

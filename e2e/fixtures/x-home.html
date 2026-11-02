@@ -13,6 +13,11 @@
     <!-- Test fixture: the parts of the X timeline markup that the extension reads. -->
     <main id="timeline"></main>
     <script>
+      // ?images: posts with images. The test serves the image files.
+      const IMAGE_POSTS = [
+        ['quietposter', '3001', 'lol so true', 'https://pbs.twimg.com/media/LULLTEST1?format=png&name=small'],
+        ['naturelover', '3002', 'Sunset from the trail today.', 'https://pbs.twimg.com/media/LULLTEST2?format=png&name=small'],
+      ];
       const POSTS = [
         ['angrydev', '1001', 'Anyone who still uses tabs is a clown and should be fired. Absolutely pathetic.'],
         ['gardenlady', '1002', 'My tomatoes finally came in this week. Here is the first harvest!'],
@@ -21,7 +26,7 @@
         ['shipit', '1005', 'Just shipped dark mode for our app. Took longer than expected but really happy with it.'],
       ];
 
-      function render(author, id, text) {
+      function render(author, id, text, image) {
         const cell = document.createElement('div');
         cell.dataset.testid = 'cellInnerDiv';
         cell.innerHTML = `
@@ -30,18 +35,23 @@
               <div data-testid="User-Name"><span>${author}</span> <span>@${author}</span></div>
               <a href="/${author}/status/${id}"><time datetime="2026-11-01T12:00:00Z">1h</time></a>
               <div data-testid="tweetText" lang="en"><span>${text}</span></div>
+              ${image ? `<div data-testid="tweetPhoto"><img alt="Image" src="${image}" width="300"></div>` : ''}
             </div>
           </article>`;
         return cell;
       }
 
       const timeline = document.getElementById('timeline');
+      if (location.search.includes('images')) {
+        for (const post of IMAGE_POSTS) timeline.append(render(...post));
+      } else {
       for (const post of POSTS.slice(0, 3)) timeline.append(render(...post));
 
       // X adds posts while the user scrolls.
       setTimeout(() => {
         for (const post of POSTS.slice(3)) timeline.append(render(...post));
       }, 500);
+      }
 
       // X reuses an article element for a different post. Tests call this.
       window.recycleFirstPost = (author, id, text) => {

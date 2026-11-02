@@ -44,11 +44,24 @@ Some computers do not have WebGPU. Some users do not want a 400 MB download. Als
 
 ### Images
 
-The vision part of d1-omni-600M is weak (ImajevBench 21.7) and is not calibrated. Thus, we do not use it for images. The plan for images is:
+The vision part of d1-omni-600M is weak (ImajevBench 21.7) and is not calibrated. Thus, we do not use it for images. Many images on X are screenshots of text, so the extension reads the text in images instead:
 
-1. **First release:** add the image alt text to the text that the model reads.
-2. **Next:** read the text in screenshots with on-device text recognition. Add that text to the model input.
-3. **Optional:** use Qwen3.5-0.8B with vision for posts that have images. Read the probabilities of the "Yes" and "No" tokens. Cache the result for each image URL.
+1. The model input contains the image alt text (`Images: …`).
+2. [Indra OCR](https://huggingface.co/datalab-to/indra-ocr) reads the text in the images on the CPU. The model input contains it (`Text in images: …`).
+3. **Later (research):** an image model for photos without text. Qwen3.5-0.8B with vision has only community browser exports today, and they are not verified.
+
+#### Text recognition: Indra OCR
+
+Date: 2026-11-02. We compared Tesseract (tesseract.js 7) and Indra OCR v1.1.0 by Datalab.
+
+| | Tesseract (tesseract.js 7) | Indra OCR (2 of its models) |
+|---|---|---|
+| Size | 12 MB of WebAssembly in the package, and 3 MB of language data | 5.6 MB of ONNX models (downloaded). It uses the ONNX Runtime that the extension already has. |
+| Speed | 5.5 s for each page (Datalab benchmark, 4 vCPUs) | 0.21 s for each page (same benchmark). 100 ms for a post screenshot in Node, one thread, Apple M5 Max. |
+| Text accuracy (OmniParseBench) | 19.3 | 46.7 |
+| License | Apache-2.0 | Code: Apache-2.0. Weights: modified OpenRAIL-M (see [licenses](#licenses)). |
+
+We use two Indra models: `det.onnx` (line detection, 0.4 MB) and `rec.onnx` (Latin-script recognition, 5 MB). `src/lib/classifier/indra/` is a TypeScript port of the Python steps: grayscale, resize, line decode, line crop, and greedy CTC decode. We do not use the orientation, script, reading-order, and language models: posts on X are upright, and the extension reads English. The parity test (`scripts/indra-parity/`) compares the port with the Python package on five synthetic images: the same line boxes (±1.5 pixels), the same text, and the same confidence (±0.02).
 
 ## Measurements (milestone M0)
 
@@ -136,6 +149,7 @@ Download the weights from Hugging Face on first use. Store them in Cache Storage
 |---|---|---|
 | d1-omni-600M | [LFM Open License v1.0](https://huggingface.co/LiquidAI/d1-2B/blob/main/LICENSE) | Free use, including commercial use, for organizations with less than USD 10 million annual revenue. We must show the license and the attribution notices. We do not redistribute the weights. The extension downloads them from Hugging Face. |
 | ModernBERT zero-shot | Apache-2.0 | No restrictions for this project. |
+| Indra OCR | Code: Apache-2.0. Weights: [modified OpenRAIL-M](https://huggingface.co/datalab-to/indra-ocr/blob/v1.1.0/LICENSE) | Free for personal use and research. Organizations with more than USD 20 million in revenue or funding, or that compete with Datalab, can use it only for personal use or research. The use restrictions in Attachment A apply to all users. We must give attribution and a copy of the license (see [NOTICE](../NOTICE)). We do not redistribute the weights. The extension downloads them from Hugging Face. |
 | Qwen3.5-0.8B | Apache-2.0 | No restrictions for this project. |
 
 > [!CAUTION]

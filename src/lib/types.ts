@@ -11,6 +11,8 @@ export interface Post {
   imageAlts: string[];
   /** Absolute URLs of attached images. */
   imageUrls: string[];
+  /** Text that on-device text recognition found in the images. */
+  imageText?: string;
   isPromoted: boolean;
 }
 

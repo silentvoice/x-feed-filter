@@ -47,11 +47,11 @@ This document gives the milestones of the project and their status.
 - ✅ "Recently filtered" list with reasons, and daily statistics
 - ⬜ Add real posts to the evaluation set (local only, not in the repository)
 
-## M4: Images ⬜
+## M4: Images ✅
 
-- ⬜ Image alt text in the model input
-- ⬜ On-device text recognition for screenshots
-- ⬜ Optional image model (Qwen3.5-0.8B) for posts with images
+- ✅ Image alt text in the model input
+- ✅ On-device text recognition for screenshots ([Indra OCR](model-selection.md#text-recognition-indra-ocr), CPU, about 6 MB)
+- ⬜ Image model for photos without text (research: Qwen3.5-0.8B vision has no verified browser export yet)
 
 ## M5: Chrome Web Store ⬜
 

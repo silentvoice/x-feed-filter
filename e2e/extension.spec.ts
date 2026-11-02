@@ -12,6 +12,10 @@ import { type BrowserContext, chromium, expect, type Page, test } from '@playwri
  */
 const EXTENSION = resolve('.output/chrome-mv3');
 const FIXTURE = resolve('e2e/fixtures/x-home.html');
+const IMAGES: Record<string, string> = {
+  LULLTEST1: resolve('e2e/fixtures/image-text.png'),
+  LULLTEST2: resolve('scripts/indra-parity/no-text.png'),
+};
 
 let context: BrowserContext;
 let extensionId: string;
@@ -27,7 +31,12 @@ test.beforeAll(async () => {
       '--enable-unsafe-webgpu',
     ],
   });
-  const html = await readFile(FIXTURE, 'utf8');
+  // The offscreen document fetches images outside of Playwright routing. Use data URLs.
+  let html = await readFile(FIXTURE, 'utf8');
+  for (const [name, file] of Object.entries(IMAGES)) {
+    const url = `data:image/png;base64,${(await readFile(file)).toString('base64')}`;
+    html = html.replace(`https://pbs.twimg.com/media/${name}?format=png&name=small`, url);
+  }
   await context.route('https://x.com/**', (route) =>
     route.fulfill({ status: 200, contentType: 'text/html', body: html }),
   );
@@ -85,6 +94,19 @@ test('filters matching posts with the on-device model', async () => {
     ),
   );
   await expect(article(page, '2001')).toHaveClass(/xff-blurred/, { timeout: 30_000 });
+});
+
+test('reads the text in images on the device', async () => {
+  const page = await context.newPage();
+  await page.goto('https://x.com/home?images');
+  await expect(page.locator('article[data-xff-id]')).toHaveCount(2);
+  await expect(page.locator('article.xff-pending')).toHaveCount(0, { timeout: 60_000 });
+
+  // The post text is harmless. The image asks for reposts and tags.
+  await expect(article(page, '3001')).toHaveClass(/xff-blurred/);
+  await expect(article(page, '3001').locator('.xff-reason')).toContainText('Engagement bait');
+  await expect(article(page, '3002')).not.toHaveClass(/xff-blurred|xff-hidden/);
+  await page.close();
 });
 
 test('"Not a match" shows the post and makes the filter less strict', async () => {

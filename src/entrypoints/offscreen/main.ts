@@ -5,6 +5,8 @@ import {
   RulesOnlyBackend,
 } from '@/lib/classifier/backend';
 import { D1Backend } from '@/lib/classifier/d1/d1-backend';
+import { ImageTextReader } from '@/lib/classifier/image-text';
+import { createIndraRecognizer } from '@/lib/classifier/indra/recognizer';
 import { ZeroShotBackend } from '@/lib/classifier/zero-shot-backend';
 import {
   isOffscreenRequest,
@@ -14,6 +16,7 @@ import {
 import type { ModelStatus } from '@/lib/model-status';
 
 const backends = new Map<BackendId, ClassifierBackend>();
+const imageText = new ImageTextReader({ createRecognizer: () => createIndraRecognizer() });
 let autoChoice: Promise<BackendId> | null = null;
 /** After a d1 failure in "auto" mode, try d1 again after this time. The error can be temporary. */
 const D1_RETRY_MS = 10 * 60 * 1000;
@@ -93,7 +96,12 @@ browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     .then(async (backend) => ({
       backend: backend.id,
       scores:
-        message.type === 'classify' ? await backend.classify(message.posts, message.filters) : [],
+        message.type === 'classify'
+          ? await backend.classify(
+              message.readImageText ? await imageText.addImageText(message.posts) : message.posts,
+              message.filters,
+            )
+          : [],
     }));
   work
     .then(({ backend, scores }) =>

@@ -62,6 +62,7 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     [
       ...filters.map((f) => `${f.id}:${f.question}`),
       `backend:${settings.backend}`,
+      `images:${settings.analyzeImages}`,
       JSON.stringify(settings.filterAdjust),
     ],
     settings.strictness,
@@ -99,6 +100,7 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     backend,
     posts: pending,
     filters,
+    readImageText: settings.analyzeImages,
   };
   const response = (await browser.runtime.sendMessage(request)) as OffscreenClassifyResponse;
   if (response.error) {
