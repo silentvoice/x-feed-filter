@@ -67,8 +67,8 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
 }
 
 function resolveBackend(settings: Settings): BackendId {
-  // TODO(M0): resolve "auto" to d1, or to zero-shot when WebGPU is not available.
-  return settings.backend === 'auto' ? 'rules-only' : settings.backend;
+  // TODO(M2): resolve "auto" to zero-shot when WebGPU is not available.
+  return settings.backend === 'auto' ? 'd1' : settings.backend;
 }
 
 function visible(post: Post): Verdict {

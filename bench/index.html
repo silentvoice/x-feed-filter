@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>d1 benchmark</title>
+    <style>
+      body { font: 14px/1.5 system-ui, sans-serif; margin: 24px; max-width: 900px; }
+      pre { background: #f4f4f5; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+      button { font: inherit; padding: 6px 14px; margin-right: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>d1-omni-600M benchmark</h1>
+    <p>
+      <button type="button" data-dtype="q8" data-device="webgpu">Run q8 on WebGPU</button>
+      <button type="button" data-dtype="q4" data-device="webgpu">Run q4 on WebGPU</button>
+      <button type="button" data-dtype="q8" data-device="wasm">Run q8 on WebAssembly</button>
+    </p>
+    <pre id="log">Select a run.</pre>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

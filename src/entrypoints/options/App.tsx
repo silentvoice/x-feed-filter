@@ -6,7 +6,7 @@ import type { Settings } from '@/lib/settings';
 
 const BACKENDS: { value: Settings['backend']; label: string }[] = [
   { value: 'auto', label: 'Automatic (recommended)' },
-  { value: 'd1', label: 'Liquid AI d1-omni-600M (about 400 MB, best accuracy)' },
+  { value: 'd1', label: 'Liquid AI d1-omni-600M (about 245 MB, best accuracy)' },
   { value: 'zero-shot', label: 'ModernBERT zero-shot (about 140 MB, faster)' },
   { value: 'rules-only', label: 'Rules only (no model, muted words only)' },
 ];

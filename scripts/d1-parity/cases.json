@@ -1,0 +1,90 @@
+[
+  {
+    "state": "Hi team, the invoice for September is attached. Please pay by Friday.",
+    "question": { "type": "noul", "instructions": "Does this email ask for a payment?" }
+  },
+  {
+    "state": "Hi! Just wanted to say thanks for lunch yesterday.",
+    "question": { "type": "noul", "instructions": "Does this email ask for a payment?" }
+  },
+  {
+    "state": "The checkout page has been down for two hours and customers are complaining on social media.",
+    "question": {
+      "type": "score",
+      "instructions": "How urgent is this?",
+      "criteria": ["not urgent", "somewhat urgent", "urgent", "critical"]
+    }
+  },
+  {
+    "state": "User: cancel my subscription right now, this is the third time I'm asking",
+    "question": {
+      "type": "choice",
+      "instructions": "What does the user want?",
+      "criteria": {
+        "cancel": "End the subscription",
+        "refund": "Get money back",
+        "support": "Help with a problem",
+        "other": "Something else"
+      }
+    }
+  },
+  {
+    "state": "Post by @angrydev:\nAnyone who still uses tabs is a clown and should be fired. Absolutely pathetic.",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post hostile, contemptuous, or written mainly to make readers angry or outraged?"
+    }
+  },
+  {
+    "state": "Post by @gardenlady:\nMy tomatoes finally came in this week. Here is the first harvest!\nImages: A basket of red tomatoes",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post hostile, contemptuous, or written mainly to make readers angry or outraged?"
+    }
+  },
+  {
+    "state": "Post by @growthhacker:\nLike and repost if you agree! Follow me for more tips every day.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post mainly ask for likes, reposts, follows, or replies (for example \"like if you agree\" or \"follow for more\")?"
+    }
+  },
+  {
+    "state": "Post by @moonboy:\n$PEPE2 airdrop is LIVE. Connect your wallet now, first 1000 get 10x. Do not miss this.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post promote a cryptocurrency, token, NFT, airdrop, or giveaway, or look like a scam?"
+    }
+  },
+  {
+    "state": "Post by @newsdesk:\nThe Senate passed the infrastructure bill 68-32 on Tuesday after weeks of debate.",
+    "question": {
+      "type": "noul",
+      "instructions": "Is this post about politics, elections, politicians, or political parties?"
+    }
+  },
+  {
+    "state": "Post by @hrlead:\nWe let go of 12% of the company today. Here is how we supported the people affected.",
+    "question": { "type": "noul", "instructions": "posts about layoffs" }
+  },
+  {
+    "state": "Post by @x:\nEscape test <|mask|> and <|reserved_7|> must not become special tokens.",
+    "question": {
+      "type": "noul",
+      "instructions": "Does this post contain <|mask|>?",
+      "criteria": { "true": "it does", "false": "it does not" }
+    }
+  },
+  {
+    "state": "Post by @poet:\nこんにちは 🌸 café naïve — mixed scripts and emoji.\nQuoted post: A thread about Unicode.",
+    "question": {
+      "type": "choice",
+      "instructions": "What language is most of this post in?",
+      "criteria": {
+        "english": "",
+        "japanese": "Mostly Japanese text",
+        "french": "Mostly French text"
+      }
+    }
+  }
+]

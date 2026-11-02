@@ -22,3 +22,6 @@ models/
 .idea
 .DS_Store
 *.sw?
+
+# Local Claude Code preview config
+.claude/launch.json
