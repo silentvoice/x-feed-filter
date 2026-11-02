@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your help. This document tells you how to contribute to X Feed Filter.
+Thank you for your help. This document tells you how to contribute to Lull.
 
 ## Before you start
 

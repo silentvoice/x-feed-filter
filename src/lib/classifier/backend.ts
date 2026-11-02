@@ -2,6 +2,9 @@ import type { FilterQuestion, FilterScores, Post } from '../types';
 
 export type BackendId = 'd1' | 'zero-shot' | 'rules-only';
 
+/** A backend, or "auto": d1 with WebGPU, else the zero-shot model. */
+export type BackendChoice = BackendId | 'auto';
+
 export type BackendStatus =
   | { state: 'unavailable'; reason: string }
   | { state: 'downloading'; progress: number }

@@ -17,7 +17,7 @@ export function App() {
 
   return (
     <main className="mx-auto max-w-2xl px-6 py-8 text-neutral-900 dark:text-neutral-100">
-      <h1 className="mb-6 font-bold text-2xl">X Feed Filter settings</h1>
+      <h1 className="mb-6 font-bold text-2xl">Lull settings</h1>
 
       <Section title="Filtered posts">
         <ActionPicker value={settings.action} onChange={(action) => update({ action })} />
@@ -76,6 +76,10 @@ export function App() {
         />
       </Section>
 
+      <Section title="Feedback">
+        <FeedbackAdjustments settings={settings} update={update} />
+      </Section>
+
       <Section title="Model">
         <select
           className="mt-1 w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm dark:border-neutral-700"
@@ -126,7 +130,7 @@ function CustomFilters(props: { settings: Settings; update: (patch: Partial<Sett
         />
         <button
           type="submit"
-          className="rounded-lg bg-sky-500 px-4 py-2 font-semibold text-sm text-white hover:bg-sky-600"
+          className="rounded-lg bg-brand-500 px-4 py-2 font-semibold text-sm text-white hover:bg-brand-600"
         >
           Add
         </button>
@@ -202,6 +206,43 @@ function ListEditor(props: {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function FeedbackAdjustments(props: {
+  settings: Settings;
+  update: (patch: Partial<Settings>) => void;
+}) {
+  const { settings, update } = props;
+  const labels = new Map<string, string>([
+    ...PRESETS.map((p) => [p.id, p.label] as [string, string]),
+    ...settings.customFilters.map((f) => [f.id, f.label] as [string, string]),
+  ]);
+  const entries = Object.entries(settings.filterAdjust).filter(([, v]) => v > 0);
+  if (entries.length === 0) {
+    return (
+      <p className="py-2 text-neutral-500 text-sm">
+        Click "Not a match" on a filtered post to make that filter less strict.
+      </p>
+    );
+  }
+  return (
+    <div className="py-2 text-sm">
+      <ul className="space-y-1">
+        {entries.map(([id, value]) => (
+          <li key={id}>
+            {labels.get(id) ?? id}: less strict by {Math.round(value * 100)} points
+          </li>
+        ))}
+      </ul>
+      <button
+        type="button"
+        onClick={() => update({ filterAdjust: {} })}
+        className="mt-2 rounded-lg border border-neutral-300 px-3 py-1.5 text-sm dark:border-neutral-700"
+      >
+        Reset feedback
+      </button>
     </div>
   );
 }

@@ -1,0 +1,144 @@
+{
+  "negativity": [
+    {
+      "question": "Is this post hostile, contemptuous, or written mainly to make readers angry or outraged?",
+      "statement": "This post is hostile, contemptuous, or written to make readers angry."
+    },
+    {
+      "question": "Is this post rage bait: hostile or insulting, written to make people angry?",
+      "statement": "This post is rage bait that is hostile or insulting."
+    },
+    {
+      "question": "Is the tone of this post hostile, insulting, or contemptuous?",
+      "statement": "The tone of this post is hostile, insulting, or contemptuous."
+    }
+  ],
+  "doomposting": [
+    {
+      "question": "Does this post predict disaster or collapse in an exaggerated, hopeless way without useful information?",
+      "statement": "This post predicts disaster or collapse in an exaggerated, hopeless way."
+    },
+    {
+      "question": "Is this post doomposting: hopeless claims that everything is collapsing or doomed?",
+      "statement": "This post says that everything is collapsing or doomed."
+    },
+    {
+      "question": "Does this post say that society, the economy, or the world is doomed?",
+      "statement": "This post says that society, the economy, or the world is doomed."
+    }
+  ],
+  "engagement-bait": [
+    {
+      "question": "Does this post mainly ask for likes, reposts, follows, or replies (for example \"like if you agree\" or \"follow for more\")?",
+      "statement": "This post asks readers to like, repost, follow, or reply."
+    },
+    {
+      "question": "Is this post engagement bait that asks people to like, repost, follow, or comment?",
+      "statement": "This post is engagement bait."
+    },
+    {
+      "question": "Does this post tell readers to like, repost, follow, or reply to get attention?",
+      "statement": "This post tells readers to like, repost, follow, or reply."
+    },
+    {
+      "question": "Is the main purpose of this post to get likes, reposts, replies, or follows?",
+      "statement": "The main purpose of this post is to get likes, reposts, replies, or follows."
+    },
+    {
+      "question": "Does this post ask readers to like, repost, reply, comment, or follow?",
+      "statement": "This post asks readers to like, repost, reply, comment, or follow."
+    },
+    {
+      "question": "Does this post ask readers to like, repost (RT), reply, comment, vote, tag someone, or follow?",
+      "statement": "This post asks readers to like, repost, reply, comment, vote, tag someone, or follow."
+    },
+    {
+      "question": "Does this post ask for likes, RTs, replies, tags, or follows (for example \"RT if\", \"tag someone\", \"reply below\", or \"follow for more\")?",
+      "statement": "This post asks for likes, RTs, replies, tags, or follows."
+    }
+  ],
+  "politics": [
+    {
+      "question": "Is this post about politics, elections, politicians, or political parties?",
+      "statement": "This post is about politics, elections, politicians, or political parties."
+    },
+    {
+      "question": "Does this post discuss politics, government, elections, laws, or politicians?",
+      "statement": "This post discusses politics, government, elections, laws, or politicians."
+    },
+    {
+      "question": "Is this a political post?",
+      "statement": "This is a political post."
+    }
+  ],
+  "crypto-scams": [
+    {
+      "question": "Does this post promote a cryptocurrency, token, NFT, airdrop, or giveaway, or look like a scam?",
+      "statement": "This post promotes a cryptocurrency, token, NFT, airdrop, or giveaway."
+    },
+    {
+      "question": "Is this post shilling a crypto coin, token, NFT, or airdrop, or a crypto scam?",
+      "statement": "This post shills a crypto coin, token, NFT, or airdrop."
+    },
+    {
+      "question": "Does this post try to get readers to buy a token or connect a crypto wallet?",
+      "statement": "This post tries to get readers to buy a token or connect a wallet."
+    }
+  ],
+  "ai-hype": [
+    {
+      "question": "Is this post low-effort hype about AI tools, such as \"10 AI tools that will replace your job\" threads?",
+      "statement": "This post is low-effort hype about AI tools."
+    },
+    {
+      "question": "Is this post clickbait hype about AI, like lists of AI tools that will change everything?",
+      "statement": "This post is clickbait hype about AI tools."
+    },
+    {
+      "question": "Does this post exaggerate what AI tools can do to get attention?",
+      "statement": "This post exaggerates what AI tools can do."
+    }
+  ],
+  "dunking": [
+    {
+      "question": "Does this post mock, insult, or pile on another person?",
+      "statement": "This post mocks, insults, or piles on another person."
+    },
+    {
+      "question": "Is this post making fun of or ridiculing a specific person?",
+      "statement": "This post makes fun of a specific person."
+    },
+    {
+      "question": "Does this post dunk on someone: mock them or laugh at them in public?",
+      "statement": "This post mocks someone in public."
+    }
+  ],
+  "layoffs": [
+    {
+      "question": "posts about layoffs"
+    },
+    {
+      "question": "Is this post about layoffs or job cuts?"
+    },
+    {
+      "question": "Is this post one of these: posts about layoffs?"
+    },
+    {
+      "question": "Does this post match this description: posts about layoffs?"
+    }
+  ],
+  "ai-topic": [
+    {
+      "question": "Posts about AI, machine learning, or AI models"
+    },
+    {
+      "question": "Is this post about AI, machine learning, or AI models?"
+    },
+    {
+      "question": "Is this post one of these: Posts about AI, machine learning, or AI models?"
+    },
+    {
+      "question": "Does this post match this description: Posts about AI, machine learning, or AI models?"
+    }
+  ]
+}

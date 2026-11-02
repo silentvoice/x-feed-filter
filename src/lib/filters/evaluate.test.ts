@@ -1,6 +1,15 @@
 import { DEFAULT_SETTINGS, type Settings } from '../settings';
 import type { Post } from '../types';
-import { activeFilters, applyRules, thresholdFor, verdictFromScores } from './evaluate';
+import {
+  activeFilters,
+  applyRules,
+  FEEDBACK_MAX,
+  filterThreshold,
+  thresholdFor,
+  verdictFromScores,
+  withFeedback,
+} from './evaluate';
+import { customQuestion } from './presets';
 
 const post = (overrides: Partial<Post> = {}): Post => ({
   id: '1',
@@ -42,6 +51,46 @@ describe('activeFilters', () => {
       }),
     );
     expect(filters.map((f) => f.id)).toEqual(['negativity', 'c1']);
+    expect(filters[1]?.question).toBe(
+      'Does this post match this description: Posts about layoffs?',
+    );
+  });
+});
+
+describe('customQuestion', () => {
+  it('wraps a description in a question and a statement', () => {
+    expect(customQuestion('posts about layoffs.')).toEqual({
+      question: 'Does this post match this description: posts about layoffs?',
+      statement: 'This post matches this description: posts about layoffs.',
+    });
+  });
+
+  it('keeps a question as typed', () => {
+    expect(customQuestion(' Is this about cats? ').question).toBe('Is this about cats?');
+  });
+});
+
+describe('filterThreshold', () => {
+  const filter = { id: 'f', label: 'F', question: 'F?', calibration: { d1: -0.3 } };
+
+  it('applies the calibration of the model that made the scores', () => {
+    expect(filterThreshold(filter, 0.5, 'd1')).toBeCloseTo(0.25);
+    expect(filterThreshold(filter, 0.5, 'zero-shot')).toBeCloseTo(0.55);
+  });
+
+  it('adds feedback and stays between 0.05 and 0.97', () => {
+    expect(filterThreshold(filter, 0.5, 'd1', { f: 0.1 })).toBeCloseTo(0.35);
+    expect(filterThreshold(filter, 1, 'd1')).toBeCloseTo(0.05);
+    expect(filterThreshold({ ...filter, calibration: { d1: 0.5 } }, 0, 'd1')).toBeCloseTo(0.97);
+  });
+});
+
+describe('withFeedback', () => {
+  it('raises each filter by one step, up to the maximum', () => {
+    let adjust: Record<string, number> = {};
+    for (let i = 0; i < 20; i++) adjust = withFeedback(adjust, ['a']);
+    expect(adjust.a).toBeCloseTo(FEEDBACK_MAX);
+    expect(withFeedback({}, ['a', 'b'])).toEqual({ a: 0.05, b: 0.05 });
   });
 });
 
@@ -90,7 +139,12 @@ describe('verdictFromScores', () => {
 
   it('hides when a score reaches the threshold and sorts reasons by score', () => {
     const verdict = verdictFromScores('1', { a: 0.6, b: 0.95 }, filters, 0.5);
-    expect(verdict).toMatchObject({ hidden: true, reasons: ['B', 'A'], score: 0.95 });
+    expect(verdict).toMatchObject({
+      hidden: true,
+      reasons: ['B', 'A'],
+      filterIds: ['b', 'a'],
+      score: 0.95,
+    });
     expect(verdictFromScores('1', { a: 0.5 }, filters, 0.5).hidden).toBe(false);
   });
 

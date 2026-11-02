@@ -1,13 +1,17 @@
-import type { BackendId } from '@/lib/classifier/backend';
-import { activeFilters, applyRules, verdictFromScores } from '@/lib/filters/evaluate';
+import { recordActivity } from '@/lib/activity';
+import { activeFilters, applyRules, verdictFromScores, withFeedback } from '@/lib/filters/evaluate';
 import {
   type ClassifyResponse,
   isClassifyRequest,
+  isFeedbackRequest,
+  isModelStatusMessage,
+  isWarmupRequest,
   type OffscreenClassifyRequest,
   type OffscreenClassifyResponse,
+  type OffscreenWarmupRequest,
 } from '@/lib/messaging';
-import type { Settings } from '@/lib/settings';
-import { getSettings } from '@/lib/storage';
+import { modelStatusItem } from '@/lib/model-status';
+import { getSettings, saveSettings } from '@/lib/storage';
 import type { Post, Verdict } from '@/lib/types';
 import { filterKey, VerdictCache } from '@/lib/verdict-cache';
 
@@ -16,11 +20,25 @@ const cache = new VerdictCache();
 
 export default defineBackground(() => {
   browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+    if (isModelStatusMessage(message)) {
+      void modelStatusItem.setValue(message.status);
+      return;
+    }
+    if (isFeedbackRequest(message)) {
+      feedback(message.postId, message.filterIds).catch((error: unknown) =>
+        console.warn('[lull] feedback failed', error),
+      );
+      return;
+    }
+    if (isWarmupRequest(message)) {
+      warmup().catch((error: unknown) => console.warn('[lull] warm-up failed', error));
+      return;
+    }
     if (!isClassifyRequest(message)) return;
     classify(message.posts)
       .then((verdicts) => sendResponse({ verdicts } satisfies ClassifyResponse))
       .catch((error: unknown) => {
-        console.error('[x-feed-filter] classify failed', error);
+        console.error('[lull] classify failed', error);
         // Fail open: show the posts.
         sendResponse({ verdicts: [] } satisfies ClassifyResponse);
       });
@@ -32,21 +50,32 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
   const settings = await getSettings();
   const filters = activeFilters(settings);
   const key = filterKey(
-    filters.map((f) => `${f.id}:${f.question}`),
+    [...filters.map((f) => `${f.id}:${f.question}`), JSON.stringify(settings.filterAdjust)],
     settings.strictness,
   );
 
   const verdicts: Verdict[] = [];
+  const fresh: Verdict[] = [];
   const pending: Post[] = [];
   for (const post of posts) {
-    const verdict = applyRules(post, settings) ?? cache.get(post.id, key);
-    if (verdict) verdicts.push(verdict);
-    else pending.push(post);
+    const cached = cache.get(post.id, key);
+    if (cached) {
+      verdicts.push(cached);
+      continue;
+    }
+    const ruled = applyRules(post, settings);
+    if (ruled) {
+      cache.set(post.id, key, ruled);
+      verdicts.push(ruled);
+      fresh.push(ruled);
+    } else pending.push(post);
   }
 
-  const backend = resolveBackend(settings);
+  const backend = settings.backend;
   if (pending.length === 0 || filters.length === 0 || backend === 'rules-only') {
-    return [...verdicts, ...pending.map(visible)];
+    const shown = pending.map(visible);
+    await recordActivity(posts, [...fresh, ...shown]);
+    return [...verdicts, ...shown];
   }
 
   await ensureOffscreenDocument();
@@ -57,21 +86,48 @@ async function classify(posts: Post[]): Promise<Verdict[]> {
     posts: pending,
     filters,
   };
-  const { scores, error } = (await browser.runtime.sendMessage(
-    request,
-  )) as OffscreenClassifyResponse;
-  if (error) console.warn('[x-feed-filter] model error:', error);
+  const response = (await browser.runtime.sendMessage(request)) as OffscreenClassifyResponse;
+  if (response.error) {
+    console.warn('[lull] model error:', response.error);
+    // Fail open, and do not cache: the next view tries again.
+    return [...verdicts, ...pending.map(visible)];
+  }
   pending.forEach((post, i) => {
-    const verdict = verdictFromScores(post.id, scores[i] ?? {}, filters, settings.strictness);
+    const verdict = verdictFromScores(
+      post.id,
+      response.scores[i] ?? {},
+      filters,
+      settings.strictness,
+      response.backend ?? 'd1',
+      settings.filterAdjust,
+    );
     cache.set(post.id, key, verdict);
     verdicts.push(verdict);
+    fresh.push(verdict);
   });
+  await recordActivity(posts, fresh);
   return verdicts;
 }
 
-function resolveBackend(settings: Settings): BackendId {
-  // TODO(M2): resolve "auto" to zero-shot when WebGPU is not available.
-  return settings.backend === 'auto' ? 'd1' : settings.backend;
+/** "Not a match": raise the threshold of the filters that matched this post. */
+async function feedback(postId: string, filterIds: string[]): Promise<void> {
+  if (filterIds.length === 0) return;
+  const settings = await getSettings();
+  await saveSettings({ ...settings, filterAdjust: withFeedback(settings.filterAdjust, filterIds) });
+  console.info('[lull] feedback for post', postId, filterIds);
+}
+
+/** Load the model in the background, so the first posts do not wait for it. */
+async function warmup(): Promise<void> {
+  const settings = await getSettings();
+  if (!settings.enabled || settings.backend === 'rules-only') return;
+  await ensureOffscreenDocument();
+  const request: OffscreenWarmupRequest = {
+    target: 'offscreen',
+    type: 'warmup',
+    backend: settings.backend,
+  };
+  await browser.runtime.sendMessage(request);
 }
 
 function visible(post: Post): Verdict {

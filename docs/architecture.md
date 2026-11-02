@@ -70,9 +70,22 @@ The d1 model answers one question about one text in each row. Thus, the backend 
 
 Each row is about 75 tokens: the post text, the filter question, and two answer options. A row is limited to 512 tokens. This limit truncates only very long posts.
 
+### Model selection
+
+The "Automatic" setting selects the model in the offscreen document:
+
+1. If WebGPU is available, the offscreen document loads d1-omni-600M (4-bit).
+2. If WebGPU is not available, or if d1 does not load, it loads ModernBERT zero-shot (8-bit) on the CPU.
+
+The offscreen document sends the model status (loading, download progress, ready, or error) to the background. The background keeps it in `chrome.storage.session`. The popup shows it. When the popup opens, it asks the background to start the model.
+
+### Posts near the viewport first
+
+The content script blurs each new post at once. It sends a post to the model only when the post comes within one screen of the viewport (`IntersectionObserver`). Thus, the posts that the user can see come first.
+
 ### Threshold
 
-One strictness value (0 to 1) controls all filters:
+One strictness value (0 to 1) sets the base threshold for all filters:
 
 ```
 threshold = 0.85 − 0.6 × strictness
@@ -80,7 +93,16 @@ threshold = 0.85 − 0.6 × strictness
 
 Strictness 0 filters a post only when the probability is 0.85 or more. The default strictness (0.5) filters a post when the probability is 0.55 or more. Strictness 1 filters a post when the probability is 0.25 or more.
 
-On real posts, d1 gives off-topic posts a probability of about 0 to 0.1. It gives on-topic posts 0.25 to 0.98. These values are provisional. The evaluation set of milestone M3 will tune them. Later releases can add a threshold for each filter.
+Then two values change the threshold of each filter:
+
+- **Calibration.** Each built-in filter has a calibration value for each model, from the evaluation set. For example, d1 is cautious about crypto posts, so the crypto filter has a calibration of −0.30 with d1. See [evaluation](evaluation.md).
+- **Feedback.** Each "Not a match" click raises the threshold of the filters that matched that post by 0.05, up to 0.30. The settings page shows these changes and can reset them.
+
+The final threshold stays between 0.05 and 0.97.
+
+### Custom filters
+
+The model works better with questions than with short descriptions. Thus, the extension changes a description such as "posts about layoffs" to "Does this post match this description: posts about layoffs?". A filter that ends with "?" does not change.
 
 ### Cache
 

@@ -28,23 +28,24 @@ This document gives the milestones of the project and their status.
 - ✅ Popup and settings page
 - ✅ Unit tests, CI, and documentation
 
-## M2: On-device model 🚧
+## M2: On-device model ✅
 
 - ✅ d1 backend in the offscreen document
 - ✅ Weights in Cache Storage
 - ✅ Test the full extension on x.com (logged in, real timeline)
 - ✅ End-to-end tests in Chromium
-- ⬜ Model download with progress in the popup
+- ✅ Model download with progress in the popup
 - ✅ Batches of (post, filter) pairs
-- ⬜ Posts near the viewport first (`IntersectionObserver`)
-- ⬜ Automatic backend selection: d1 with WebGPU, else the zero-shot fallback
+- ✅ Posts near the viewport first (`IntersectionObserver`)
+- ✅ Automatic backend selection: d1 with WebGPU, else the zero-shot fallback
 
-## M3: Quality ⬜
+## M3: Quality ✅
 
-- ⬜ Evaluation set of about 200 labeled posts
-- ⬜ Tuned descriptions and default thresholds for the built-in filters
-- ⬜ "Wrong result" buttons on posts that adjust the threshold of each filter
-- ⬜ "Recently filtered" list with reasons, and daily statistics
+- ✅ Evaluation set of 250 labeled posts (`eval/posts.json`) and `npm run eval`
+- ✅ Tuned descriptions and a calibration for each built-in filter. See [evaluation](evaluation.md).
+- ✅ "Not a match" button on filtered posts that adjusts the threshold of each filter
+- ✅ "Recently filtered" list with reasons, and daily statistics
+- ⬜ Add real posts to the evaluation set (local only, not in the repository)
 
 ## M4: Images ⬜
 

@@ -16,7 +16,7 @@ export function Toggle(props: {
       </span>
       <input
         type="checkbox"
-        className="mt-0.5 size-4 accent-sky-500"
+        className="mt-0.5 size-4 accent-brand-500"
         checked={props.checked}
         onChange={(e) => props.onChange(e.target.checked)}
       />
@@ -50,9 +50,9 @@ export function ActionPicker(props: {
         <label
           key={option.value}
           title={option.hint}
-          className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium has-focus-visible:outline-2 has-focus-visible:outline-sky-500 ${
+          className={`cursor-pointer rounded-lg border px-3 py-2 text-center text-sm font-medium has-focus-visible:outline-2 has-focus-visible:outline-brand-500 ${
             props.value === option.value
-              ? 'border-sky-500 bg-sky-500/10 text-sky-600 dark:text-sky-400'
+              ? 'border-brand-500 bg-brand-500/10 text-brand-600 dark:text-brand-400'
               : 'border-neutral-300 dark:border-neutral-700'
           }`}
         >
@@ -84,7 +84,7 @@ export function StrictnessSlider(props: { value: number; onChange: (value: numbe
         step={0.05}
         value={props.value}
         onChange={(e) => props.onChange(Number(e.target.value))}
-        className="w-full accent-sky-500"
+        className="w-full accent-brand-500"
       />
       <span className="flex justify-between text-neutral-500 text-xs">
         <span>Clear matches only</span>

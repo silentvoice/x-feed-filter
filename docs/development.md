@@ -59,6 +59,7 @@ This document tells you how to set up, build, test, and debug the extension.
 | `npm run bench` | Start the d1 benchmark page on `http://localhost:5199` |
 | `npm run parity` | Compare the d1 TypeScript port with the Python reference |
 | `npm run e2e` | Run the end-to-end tests in Chromium. Run `npm run build` first. |
+| `npm run eval -- d1` | Measure the filters on the evaluation set. Use `zero-shot` for the fallback model. |
 
 ## Project structure
 
@@ -91,12 +92,12 @@ docs/                   Documentation (ASD-STE100)
 
 1. Open x.com.
 2. Open Chrome DevTools.
-3. Open the **Console** tab. Messages from the extension start with `[x-feed-filter]`.
+3. Open the **Console** tab. Messages from the extension start with `[lull]`.
 
 ### Background service worker
 
 1. Open `chrome://extensions`.
-2. Find **X Feed Filter**.
+2. Find **Lull**.
 3. Click **service worker**.
 
 ### Offscreen document
@@ -179,13 +180,38 @@ The end-to-end tests load the built extension into Chromium. They use a copy of 
    npm run build
    ```
 
-3. Run the tests. Set `XFF_PROFILE_DIR` to keep the downloaded model between runs:
+3. Run the tests:
 
    ```bash
-   XFF_PROFILE_DIR=.cache/e2e-profile npm run e2e
+   npm run e2e
    ```
 
-The first run downloads the model (about 245 MB). A Chromium window opens during the test.
+Each run uses a new browser profile and downloads the models (about 245 MB and 150 MB). A Chromium window opens during the test.
+
+> [!CAUTION]
+> You can set `XFF_PROFILE_DIR` to keep the models between runs. But Chrome can keep the old background service worker in that profile after you build again. Then the tests use old code. Use a new profile after each build.
+
+## Measure the filters
+
+The evaluation set (`eval/posts.json`) has 250 original posts. Each post has a label (0 or 1) for each filter. `eval/variants.json` has the wordings to compare.
+
+1. Run the evaluation for d1 (WebGPU):
+
+   ```bash
+   D1_MODEL_DIR=models/d1 npm run eval -- d1
+   ```
+
+2. Run the evaluation for the fallback model (CPU, slower):
+
+   ```bash
+   ZS_MODEL_DIR=models/zero-shot npm run eval -- zero-shot
+   ```
+
+3. Read the tables. The script also writes `eval/results/<model>.json`.
+
+Without `D1_MODEL_DIR` or `ZS_MODEL_DIR`, the page downloads the model from Hugging Face.
+
+When you change the wording or the calibration of a built-in filter (`src/lib/filters/presets.ts`), add the new wording to `eval/variants.json`. Then run the evaluation again and update [evaluation](evaluation.md).
 
 ## Change X selectors
 

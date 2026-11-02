@@ -1,14 +1,16 @@
-import type { ClassifyRequest, ClassifyResponse } from '@/lib/messaging';
+import type { ClassifyRequest, ClassifyResponse, FeedbackRequest } from '@/lib/messaging';
 import type { Settings } from '@/lib/settings';
 import { getSettings, watchSettings } from '@/lib/storage';
 import type { Post, Verdict } from '@/lib/types';
 import { extractPost } from '@/lib/x-dom/extract';
 import { SELECTORS } from '@/lib/x-dom/selectors';
-import { clearTreatment, markPending, showVerdict } from './treatment';
+import { clearTreatment, markPending, showVerdict, type TreatmentHandlers } from './treatment';
 import './style.css';
 
 const BATCH_SIZE = 8;
 const BATCH_DELAY_MS = 40;
+/** Check posts up to one screen above and below the viewport first. */
+const NEAR_VIEWPORT = '100% 0px 100% 0px';
 
 export default defineContentScript({
   matches: ['*://x.com/*', '*://twitter.com/*'],
@@ -18,6 +20,16 @@ export default defineContentScript({
     const queue: Post[] = [];
     let flushTimer: ReturnType<typeof setTimeout> | undefined;
     let scanQueued = false;
+    // Posts that the user revealed stay revealed, also after a settings change.
+    const revealed = new Set<string>();
+    const handlers: TreatmentHandlers = {
+      onReveal: (postId) => revealed.add(postId),
+      isRevealed: (postId) => revealed.has(postId),
+      onNotMatch: (postId, filterIds) => {
+        const request: FeedbackRequest = { type: 'feedback', postId, filterIds };
+        browser.runtime.sendMessage(request).catch(() => {});
+      },
+    };
 
     const flush = async () => {
       flushTimer = undefined;
@@ -30,15 +42,39 @@ export default defineContentScript({
         ({ verdicts } = (await browser.runtime.sendMessage(request)) as ClassifyResponse);
       } catch (error) {
         // The extension was reloaded or the background is not available. Fail open.
-        console.warn('[x-feed-filter] classify request failed', error);
+        console.warn('[lull] classify request failed', error);
       }
       const byId = new Map(verdicts.map((v) => [v.postId, v]));
       for (const post of batch) {
         for (const article of articlesFor(post.id)) {
-          showVerdict(article, byId.get(post.id), settings);
+          showVerdict(article, byId.get(post.id), settings, handlers);
         }
       }
     };
+
+    const enqueue = (post: Post) => {
+      queue.push(post);
+      if (flushTimer === undefined) {
+        flushTimer = setTimeout(flush, queue.length >= BATCH_SIZE ? 0 : BATCH_DELAY_MS);
+      }
+    };
+
+    // Posts wait here until they come near the viewport. Then they go to the queue.
+    const waiting = new WeakMap<Element, Post>();
+    const nearViewport = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const post = waiting.get(entry.target);
+          nearViewport.unobserve(entry.target);
+          waiting.delete(entry.target);
+          // Skip the post if X reused the element for a different post.
+          if (post && (entry.target as HTMLElement).dataset.xffId === post.id) enqueue(post);
+        }
+      },
+      { rootMargin: NEAR_VIEWPORT },
+    );
+    ctx.onInvalidated(() => nearViewport.disconnect());
 
     const scan = () => {
       scanQueued = false;
@@ -50,10 +86,9 @@ export default defineContentScript({
         clearTreatment(article);
         article.dataset.xffId = post.id;
         if (settings.pendingBlur) markPending(article);
-        queue.push(post);
-      }
-      if (queue.length > 0 && flushTimer === undefined) {
-        flushTimer = setTimeout(flush, queue.length >= BATCH_SIZE ? 0 : BATCH_DELAY_MS);
+        waiting.set(article, post);
+        nearViewport.unobserve(article);
+        nearViewport.observe(article);
       }
     };
 

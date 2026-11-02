@@ -48,7 +48,21 @@ article.xff-hidden {
   cursor: pointer;
 }
 
-.xff-show:focus-visible {
+.xff-not-match {
+  flex: none;
+  padding: 6px 4px;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  color: inherit;
+  text-decoration: underline;
+  background: none;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.xff-show:focus-visible,
+.xff-not-match:focus-visible {
   outline: 2px solid rgb(29 155 240);
   outline-offset: 2px;
 }

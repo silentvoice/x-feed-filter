@@ -35,3 +35,6 @@ e2e/.*.mjs
 
 # Local caches
 .cache/
+
+# Evaluation output (regenerate with npm run eval)
+eval/results/

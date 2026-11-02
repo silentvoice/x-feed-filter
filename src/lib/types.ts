@@ -20,6 +20,10 @@ export interface FilterQuestion {
   label: string;
   /** Plain-language description, for example "Rage bait or outrage farming". */
   question: string;
+  /** The same filter as a statement, for zero-shot (NLI) models. */
+  statement?: string;
+  /** Threshold change for each model, from the evaluation set. */
+  calibration?: Partial<Record<'d1' | 'zero-shot' | 'rules-only', number>>;
 }
 
 /** Probability (0 to 1) that a post matches each filter, keyed by filter ID. */
@@ -30,6 +34,8 @@ export interface Verdict {
   hidden: boolean;
   /** Labels of the filters that matched. Empty if the post is visible. */
   reasons: string[];
+  /** IDs of the filters that matched, in the same order as `reasons`. */
+  filterIds?: string[];
   /** Highest score among the matched filters. */
   score: number;
   source: 'rule' | 'model' | 'cache';

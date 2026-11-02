@@ -1,12 +1,33 @@
+import type { BackendId } from '../classifier/backend';
 import type { Settings } from '../settings';
 import type { FilterQuestion, FilterScores, Post, Verdict } from '../types';
-import { PRESETS } from './presets';
+import { CUSTOM_CALIBRATION, customQuestion, PRESETS } from './presets';
+
+/** Each "Not a match" click raises that filter's threshold by this amount. */
+export const FEEDBACK_STEP = 0.05;
+/** The largest total change from feedback. */
+export const FEEDBACK_MAX = 0.3;
 
 /** The filters that the model must check, from the current settings. */
 export function activeFilters(settings: Settings): FilterQuestion[] {
-  const presets = PRESETS.filter((p) => settings.presets[p.id]);
-  const custom = settings.customFilters.filter((f) => f.enabled);
-  return [...presets, ...custom].map(({ id, label, question }) => ({ id, label, question }));
+  const presets: FilterQuestion[] = PRESETS.filter((p) => settings.presets[p.id]).map(
+    ({ id, label, question, statement, calibration }) => ({
+      id,
+      label,
+      question,
+      statement,
+      calibration,
+    }),
+  );
+  const custom: FilterQuestion[] = settings.customFilters
+    .filter((f) => f.enabled)
+    .map((f) => ({
+      id: f.id,
+      label: f.label,
+      ...customQuestion(f.question),
+      calibration: CUSTOM_CALIBRATION,
+    }));
+  return [...presets, ...custom];
 }
 
 /**
@@ -18,6 +39,18 @@ export function activeFilters(settings: Settings): FilterQuestion[] {
  */
 export function thresholdFor(strictness: number): number {
   return 0.85 - 0.6 * Math.min(1, Math.max(0, strictness));
+}
+
+/** The threshold for one filter: strictness, model calibration, and user feedback. */
+export function filterThreshold(
+  filter: FilterQuestion,
+  strictness: number,
+  backend: BackendId,
+  adjust: Record<string, number> = {},
+): number {
+  const t =
+    thresholdFor(strictness) + (filter.calibration?.[backend] ?? 0) + (adjust[filter.id] ?? 0);
+  return Math.min(0.97, Math.max(0.05, t));
 }
 
 /** Check the rules that do not need the model. Returns a verdict, or null if no rule applies. */
@@ -45,19 +78,38 @@ export function verdictFromScores(
   scores: FilterScores,
   filters: FilterQuestion[],
   strictness: number,
+  backend: BackendId = 'd1',
+  adjust: Record<string, number> = {},
 ): Verdict {
-  const threshold = thresholdFor(strictness);
   const matched = filters
-    .map((f) => ({ label: f.label, score: scores[f.id] ?? 0 }))
-    .filter((m) => m.score >= threshold)
+    .map((f) => ({
+      id: f.id,
+      label: f.label,
+      score: scores[f.id] ?? 0,
+      threshold: filterThreshold(f, strictness, backend, adjust),
+    }))
+    .filter((m) => m.score >= m.threshold)
     .sort((a, b) => b.score - a.score);
   return {
     postId,
     hidden: matched.length > 0,
     reasons: matched.map((m) => m.label),
+    filterIds: matched.map((m) => m.id),
     score: matched[0]?.score ?? 0,
     source: 'model',
   };
+}
+
+/** Apply one "Not a match" click to the feedback adjustments. */
+export function withFeedback(
+  adjust: Record<string, number>,
+  filterIds: string[],
+): Record<string, number> {
+  const next = { ...adjust };
+  for (const id of filterIds) {
+    next[id] = Math.min(FEEDBACK_MAX, (next[id] ?? 0) + FEEDBACK_STEP);
+  }
+  return next;
 }
 
 function normalizeHandle(handle: string): string {

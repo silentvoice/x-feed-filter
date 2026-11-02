@@ -33,8 +33,25 @@ export default defineConfig({
   root: resolve(import.meta.dirname),
   plugins: [
     staticDir('/model', process.env.D1_MODEL_DIR && resolve(process.env.D1_MODEL_DIR)),
+    staticDir('/zsmodel', process.env.ZS_MODEL_DIR && resolve(process.env.ZS_MODEL_DIR)),
     staticDir('/ort', resolve(import.meta.dirname, '../node_modules/onnxruntime-web/dist')),
   ],
   optimizeDeps: { exclude: ['onnxruntime-web'] },
-  server: { port: 5199, fs: { allow: [resolve(import.meta.dirname, '..')] } },
+  server: {
+    port: 5199,
+    fs: { allow: [resolve(import.meta.dirname, '..')] },
+    // Cross-origin isolation lets ONNX Runtime use WebAssembly threads on the CPU.
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        bench: resolve(import.meta.dirname, 'index.html'),
+        eval: resolve(import.meta.dirname, 'eval.html'),
+      },
+    },
+  },
 });
