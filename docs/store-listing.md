@@ -2,6 +2,8 @@
 
 This document gives the text and the answers for the Chrome Web Store listing. Copy them into the [developer dashboard](https://chrome.google.com/webstore/devconsole) when you publish a release.
 
+**Live listing:** [Lull: a calmer feed for X](https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb)
+
 ## Package
 
 1. Build the package:
@@ -20,7 +22,7 @@ This document gives the text and the answers for the Chrome Web Store listing. C
 
 > Describe the posts you do not want to see on X. A small AI model on your device filters them out. No servers, no account.
 
-**Category:** Social & Communication
+**Category:** Social Networking
 
 **Language:** English
 
@@ -73,13 +75,13 @@ To make the images again, run `npm run build && npm run store:assets`. The feed 
 
 | Permission | Justification |
 |---|---|
-| `storage` | Keep the user's filters and settings, the daily counts, and the model status. |
-| `offscreen` | Run the AI model in an offscreen document. Service workers cannot use WebGPU or decode images. |
+| `storage` | Store filters, custom rules, muted words, and the account allowlist in Chrome sync storage. Keep model status and daily counts locally. Also keep the last 30 filtered-post snippets and up to 1,000 evaluation posts locally. Evaluation storage is off by default. |
+| `offscreen` | Run the bundled on-device AI and OCR runtimes in an offscreen document with WebGPU and browser image decoding. The service worker handles messages and settings. |
 | Host permission `*://x.com/*`, `*://twitter.com/*` | Read the posts on the page and blur or hide the posts that match the user's filters. |
 
 **Remote code:** No. All code, including the WebAssembly runtime (ONNX Runtime Web), is in the package. The extension downloads model weights (data files) from Hugging Face. The weights are not code.
 
-**Data usage.** Select **Website content**. The extension reads the text and images of posts on x.com to check them on the device. It does not send this data to a server.
+**Data usage.** Select **Website content** and **Personally identifiable information**. The extension reads post text, images, and author handles on the device. Its allowlist also stores account handles. It does not upload post content.
 
 Select all three certifications:
 
@@ -88,6 +90,14 @@ Select all three certifications:
 - I do not use or transfer user data to determine creditworthiness or for lending purposes.
 
 **Privacy policy URL:** https://silentvoice.github.io/x-feed-filter/privacy.html
+
+## Test instructions
+
+The reviewer needs an X account. Lull requires no separate account. Leave the username and password fields empty.
+
+**Additional instructions** (500 characters or fewer):
+
+> Lull requires no account. On the welcome page, click "Download and start" (~251 MB from Hugging Face; WebGPU recommended). Open https://x.com/home signed into a reviewer-owned X account, then refresh it. Defaults blur matching posts and show a reason; "Show" reveals a post and "Not a match" adjusts the filter. The toolbar popup shows counts; "Add your own filter" opens settings for custom rules, muted words, an allowlist, and Blur/Hide. Processing is on-device.
 
 ## Before you submit
 
