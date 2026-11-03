@@ -89,10 +89,10 @@
         <h1>A calmer feed <span style="white-space: nowrap">for X.</span></h1>
         <p class="lede">Tell Lull what you do not want to see, in your own words. A small AI model on your computer reads each post and blurs the ones that match. Your feed never leaves your device.</p>
         <div class="cta">
-          <a class="btn primary" href="https://github.com/silentvoice/x-feed-filter#install">Install the developer build</a>
+          <a class="btn primary" href="https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb">Install from the Chrome Web Store</a>
           <a class="btn ghost" href="https://github.com/silentvoice/x-feed-filter">View the source</a>
         </div>
-        <p class="small">Free and open source (Apache-2.0). Chrome Web Store release coming soon.</p>
+        <p class="small">Free and open source (Apache-2.0). Available in the Chrome Web Store.</p>
       </div>
 
       <figure class="feed" aria-label="Example feed with Lull">
@@ -153,18 +153,20 @@
 
   <section>
     <div class="wrap">
-      <h2>Try it</h2>
-      <p class="sub">Lull is not in the Chrome Web Store yet. Build it from the source:</p>
-<pre><code>git clone https://github.com/silentvoice/x-feed-filter.git
-cd x-feed-filter && npm install && npm run build</code></pre>
-      <p class="sub">Then open <code>chrome://extensions</code>, turn on Developer mode, click Load unpacked, and select <code>.output/chrome-mv3</code>. The first use downloads the model (about 245 MB).</p>
+      <h2>Get Lull for Chrome</h2>
+      <p class="sub">Install Lull from the Chrome Web Store. On the welcome page, click <strong>Download and start</strong>. Then open x.com and sign in.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb">Install from the Chrome Web Store</a>
+        <a class="btn ghost" href="https://github.com/silentvoice/x-feed-filter#development-build">Build from the source</a>
+      </div>
+      <p class="small">The first use downloads the models (about 251 MB, including text recognition). If X is already open, refresh its tab.</p>
     </div>
   </section>
 
   <section>
     <div class="wrap">
       <h2>Questions</h2>
-      <details><summary>Does Lull send my feed anywhere?</summary><p>No. The model runs in your browser. The only network request downloads the model from Hugging Face, one time.</p></details>
+      <details><summary>Does Lull send my feed anywhere?</summary><p>No. The model runs in your browser. Lull downloads models from Hugging Face. When "Check images" is on, it also downloads post images from X to read their text. It does not upload post content.</p></details>
       <details><summary>Which computers work?</summary><p>Desktop Chrome. A Mac with Apple silicon gives the best speed. Other computers with WebGPU also work, and computers without WebGPU use the smaller CPU model.</p></details>
       <details><summary>What if a post is filtered by mistake?</summary><p>Click Show to see it. Move the strictness slider, or make the filter description more specific.</p></details>
       <details><summary>What is the license?</summary><p>The code uses Apache-2.0. The d1 model has its own license (LFM Open License v1.0), which is free for organizations with less than USD 10 million annual revenue.</p></details>
@@ -173,7 +175,7 @@ cd x-feed-filter && npm install && npm run build</code></pre>
 
   <footer>
     <div class="wrap">
-      Lull · <a href="https://github.com/silentvoice/x-feed-filter">GitHub</a> · <a href="privacy.html">Privacy</a> · Apache-2.0<br>
+      Lull · <a href="https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb">Chrome Web Store</a> · <a href="https://github.com/silentvoice/x-feed-filter">GitHub</a> · <a href="privacy.html">Privacy</a> · Apache-2.0<br>
       Lull is not affiliated with, endorsed by, or sponsored by X Corp.
     </div>
   </footer>
