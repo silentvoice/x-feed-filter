@@ -53,11 +53,11 @@ This document gives the milestones of the project and their status.
 - ✅ On-device text recognition for screenshots ([Indra OCR](model-selection.md#text-recognition-indra-ocr), CPU, about 6 MB)
 - ⬜ Image model for photos without text (research: Qwen3.5-0.8B vision has no verified browser export yet)
 
-## M5: Chrome Web Store 🚧
+## M5: Chrome Web Store ✅
 
 - ✅ First-run page that explains the download size and starts the download
 - ✅ Posts stay visible while the model downloads. They do not wait for it.
 - ✅ Error states: "Try again" for a model that does not start, and automatic retries every 30 seconds
 - ✅ Store listing, screenshots, promotional tiles, and privacy disclosures. See [store listing](store-listing.md).
 - ✅ Privacy policy page on the website
-- ⬜ First public release (the maintainer submits it from the Chrome Web Store developer account)
+- ✅ [First public release in the Chrome Web Store](https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb)
