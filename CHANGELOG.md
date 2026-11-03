@@ -6,6 +6,10 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 
 ## [Unreleased]
 
+## [0.1.0]
+
+First public release. [Install Lull from the Chrome Web Store](https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb).
+
 ### Added
 
 - Welcome page on install: what Lull does, the download size for this computer, a **Download and start** button, privacy, and model licenses.
@@ -53,3 +57,4 @@ The format uses [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The pr
 - Strictness now maps to thresholds from 0.85 to 0.25 (0.55 by default). On real posts, on-topic scores are often 0.25 to 0.98.
 
 [Unreleased]: https://github.com/silentvoice/x-feed-filter/commits/main
+[0.1.0]: https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb
