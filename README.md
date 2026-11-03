@@ -8,7 +8,7 @@
 Describe the posts that you do not want to see. A small AI model on your computer filters them out.<br>
 Your posts do not go to a server.
 
-[Website](https://silentvoice.github.io/x-feed-filter/) · [Roadmap](docs/roadmap.md) · [Model selection](docs/model-selection.md)
+[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb) · [Website](https://silentvoice.github.io/x-feed-filter/) · [Roadmap](docs/roadmap.md) · [Model selection](docs/model-selection.md)
 
 [![CI](https://github.com/silentvoice/x-feed-filter/actions/workflows/ci.yml/badge.svg)](https://github.com/silentvoice/x-feed-filter/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/silentvoice/x-feed-filter/actions/workflows/codeql.yml/badge.svg)](https://github.com/silentvoice/x-feed-filter/actions/workflows/codeql.yml)
@@ -19,9 +19,6 @@ Your posts do not go to a server.
 
 </div>
 
-> [!NOTE]
-> This project is in early development. It works on x.com in Chrome, but it is not in the Chrome Web Store yet. See the [roadmap](docs/roadmap.md).
-
 ## Features
 
 - **Filters in plain language.** Type a description, for example "posts about layoffs". The extension removes the posts that match it.
@@ -29,14 +26,26 @@ Your posts do not go to a server.
 - **Blur or hide.** By default, a filtered post is blurred. The blur shows the reason and a **Show** button. You can also remove filtered posts fully.
 - **No flash of filtered content.** New posts stay blurred until the extension checks them.
 - **Strictness control.** One slider sets how sure the model must be before it filters a post.
-- **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). Computers without WebGPU use a smaller model on the CPU. The extension does not collect data. It has no server and needs no account.
+- **Private by design.** The model ([Liquid AI d1-omni-600M](https://huggingface.co/LiquidAI/d1-omni-600M), 4-bit) runs on your device with WebGPU. The extension downloads it once (about 245 MB). Computers without WebGPU use a smaller model on the CPU. The extension does not send posts to a server or collect analytics. It has no server and needs no account.
 - **Text in images.** The extension also reads the text in screenshots and other images, on your device.
 - **Muted words and an allowlist.** Hide posts that contain specific words. Never filter the accounts that you trust.
 
 ## Install
 
-> [!IMPORTANT]
-> The extension is not in the Chrome Web Store yet. Use the procedure that follows to install a development build.
+Lull is available in the Chrome Web Store for desktop Chrome. The first use downloads the models (about 251 MB, including text recognition).
+
+1. Open [Lull in the Chrome Web Store](https://chromewebstore.google.com/detail/lull-a-calmer-feed-for-x/mahdkdhhaigknglhcdghagjgchcmmjdb).
+2. Click **Add to Chrome**.
+3. Confirm the installation in Chrome.
+4. On the welcome page, click **Download and start**.
+5. Open [x.com/home](https://x.com/home).
+6. Sign in to your X account.
+
+If X was open before installation, refresh its tab.
+
+### Development build
+
+To build Lull from the source, use the procedure that follows.
 
 Requirements:
 
